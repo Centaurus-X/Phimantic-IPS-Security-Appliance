@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuricataMonitor · Anmelden</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <script>
+        (function () {
+            try {
+                var stored = localStorage.getItem("surimon.theme");
+                var theme = stored ||
+                    (window.matchMedia &&
+                     window.matchMedia("(prefers-color-scheme: dark)").matches
+                     ? "dark" : "light");
+                document.documentElement.setAttribute("data-theme", theme);
+            } catch (e) {}
+        }());
+    </script>
+</head>
+<body>
+
+<div class="login-page">
+    <div class="login-card">
+        <h1>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                 stroke="#2563eb" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2 L4 6 v6 c0 5 3.5 9 8 10 4.5-1 8-5 8-10 V6 z"/>
+                <path d="M9 12 l2 2 4-4"/>
+            </svg>
+            SuricataMonitor
+        </h1>
+        <div class="hint">Suricata IDS/IPS Management Interface</div>
+
+        <div class="login-error" id="login-error"></div>
+
+        <form id="login-form">
+            <div class="form-row">
+                <label for="username">Benutzername</label>
+                <input class="input" id="username" name="username"
+                       type="text" autocomplete="username"
+                       required autofocus>
+            </div>
+            <div class="form-row">
+                <label for="password">Passwort</label>
+                <input class="input" id="password" name="password"
+                       type="password" autocomplete="current-password" required>
+            </div>
+            <button class="btn btn-primary" type="submit" style="width:100%"
+                    id="btn-login">
+                Anmelden
+            </button>
+        </form>
+
+        <div class="mt-24 fs-12 muted">
+            Erstes Login? Standardzugang <code>admin</code> /
+            <code>changeme</code>. Bitte sofort aendern!
+        </div>
+    </div>
+</div>
+
+<script src="/js/lib/utils.js"></script>
+<script src="/js/lib/api.js"></script>
+<script src="/js/auth.js"></script>
+
+</body>
+</html>

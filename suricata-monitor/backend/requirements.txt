@@ -1,0 +1,12 @@
+# SuricataMonitor Backend Dependencies
+#
+# Wir halten die Liste bewusst minimal:
+#  - Flask: HTTP-Server + Routing
+#  - PyYAML: Config-Loading
+#
+# Suricata-Steuerung erfolgt nativ ueber Unix-Socket + subprocess.
+# Kein Suricatasc/suricata-python noetig.
+# Auth nutzt nur stdlib (hmac, hashlib, secrets, base64, json).
+# DB ist sqlite3 aus stdlib.
+Flask>=2.3,<4.0
+PyYAML>=6.0

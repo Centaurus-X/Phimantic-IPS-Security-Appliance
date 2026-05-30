@@ -1,0 +1,17 @@
+[Unit]
+Description=PHIMANTEC FlowBus Inspectord on Suricata Node
+After=network-online.target suricata.service
+Wants=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/phimantec-inspectord -c /etc/phimantec/phimantec-suricata-node.conf
+Restart=on-failure
+RestartSec=5
+User=phimantec
+Group=phimantec
+
+[Install]
+WantedBy=multi-user.target

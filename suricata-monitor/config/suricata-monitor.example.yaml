@@ -1,0 +1,80 @@
+# SuricataMonitor Beispiel-Konfiguration
+#
+# Datei kopieren nach: config/suricata-monitor.yaml
+# oder per Umgebungsvariable: SURIMON_CONFIG=/etc/suricata-monitor/suricata-monitor.yaml
+#
+# Fehlende Felder werden mit Defaults aus backend/config.py aufgefuellt.
+
+server:
+  bind_host: "0.0.0.0"  # auf allen Interfaces lauschen (LAB-Default)
+  # WICHTIG: in Produktion entweder "127.0.0.1" + Reverse-Proxy mit TLS
+  # oder konkrete Lab-IP (z.B. "192.168.0.236")
+  bind_port: 5050
+  debug: false
+
+auth:
+  # WICHTIG: in Produktion durch zufaelligen 32+ Byte Key ersetzen!
+  # Beispiel zur Erzeugung:
+  #   python3 -c 'import secrets; print(secrets.token_hex(32))'
+  secret_key: "CHANGE-ME-PLEASE-USE-LONG-RANDOM-STRING"
+  token_ttl_minutes: 480     # 8 Stunden
+  cookie_name: "surimon_token"
+  cookie_secure: false       # in Produktion mit HTTPS auf true setzen
+
+database:
+  # Pfad zur SQLite-DB. Wird automatisch angelegt.
+  path: "/var/lib/suricata-monitor/suricata-monitor.db"
+
+suricata:
+  # Pfad zur Suricata Unix-Command-Socket (suricatasc-kompatibel).
+  socket_path: "/var/run/suricata/suricata-command.socket"
+
+  # Pfad zum laufenden EVE-Log (NDJSON).
+  eve_path: "/var/log/suricata/eve.json"
+
+  # Pfad zur Suricata-Hauptkonfiguration. Wird VOR jeder Aenderung
+  # automatisch als suricata.yaml.bak.<timestamp> gesichert.
+  config_path: "/etc/suricata/suricata.yaml"
+
+  # Verzeichnis mit Regeldateien (alle .rules).
+  rules_dir: "/var/lib/suricata/rules"
+
+  # suricata-update Binary.
+  update_bin: "/usr/bin/suricata-update"
+
+  # systemd-Unit fuer Restart/Status.
+  service_unit: "suricata.service"
+
+  # Steuerung: auto | systemctl | socket | command.
+  # socket ist fuer Docker/Container ohne systemd gedacht.
+  control_mode: "auto"
+  reload_command: ""
+  restart_command: ""
+  status_command: ""
+
+  # Mock-Modus: wenn true, liefert SuricataMonitor Demo-Daten aus, statt mit
+  # einem echten Suricata zu sprechen. Hilfreich fuer:
+  #  - UI-Entwicklung
+  #  - Workshops/Demos ohne installiertes Suricata
+  #  - Erstinstallation, bevor Suricata aufgesetzt ist
+  mock_mode: true
+
+logging:
+  # Vorbereitet fuer kuenftige Log-Persistenz (Phase 2).
+  # Aktuell nur Stub - nicht implementiert.
+  persistence_enabled: false
+  retention_days: 30
+
+phimantec:
+  state_dir: "/var/lib/suricata-monitor"
+  persisted_config_path: "/var/lib/suricata-monitor/suricata.yaml.persisted"
+  runtime_override_path: "/var/lib/suricata-monitor/phimantec-runtime-overrides.env"
+  profile: "generic"
+  lane_port: 18080
+  flowbus_port: 18090
+  local_rules_file: "phimantec-local.rules"
+  required_eve_file: "eve.json"
+  proxy_safe_notice: >-
+    In einem PHIMANTEC Proxy-Lane-Profil sollten EVE-Alert-Payload,
+    rule-files und Capture-Interface konsistent bleiben. Andere Suricata-
+    Profile sind moeglich, muessen aber separat getestet werden.

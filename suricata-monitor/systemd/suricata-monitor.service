@@ -1,0 +1,18 @@
+[Unit]
+Description=SuricataMonitor Suricata Management Interface
+After=network.target suricata.service
+Wants=network.target
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=simple
+WorkingDirectory=@INSTALL_DIR@
+Environment=SURIMON_CONFIG=@CONFIG_DIR@/suricata-monitor.yaml
+ExecStart=/usr/bin/python3 @INSTALL_DIR@/backend/app.py
+Restart=on-failure
+RestartSec=5s
+LimitNOFILE=8192
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 1280" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <!-- Pfeile -->
+    <marker id="arrBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1d4ed8"/>
+    </marker>
+    <marker id="arrGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#15803d"/>
+    </marker>
+    <marker id="arrOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/>
+    </marker>
+    <marker id="arrPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/>
+    </marker>
+    <marker id="arrGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+    <linearGradient id="gradClient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+    <linearGradient id="gradProxy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#eff6ff"/>
+      <stop offset="100%" stop-color="#dbeafe"/>
+    </linearGradient>
+    <linearGradient id="gradSuri" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0fdf4"/>
+      <stop offset="100%" stop-color="#dcfce7"/>
+    </linearGradient>
+    <linearGradient id="gradNew" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fdf2f8"/>
+      <stop offset="100%" stop-color="#fce7f3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Weißer Background fuer guten Light/Dark Kontrast in Doku-Viewer -->
+  <rect width="1480" height="1280" fill="#ffffff"/>
+
+  <!-- Titel -->
+  <text x="700" y="38" font-size="24" font-weight="700" text-anchor="middle" fill="#0f172a">
+    PHIMANTEC C11 Appliance — v0.2.0-lab
+  </text>
+  <text x="700" y="62" font-size="13" text-anchor="middle" fill="#475569">
+    Aktuelle Architektur · 3-Host Lab · Hot-Path mit H1 Keep-Alive · Upstream-TLS-Reuse · Chunked-Decoder
+  </text>
+  <line x1="60" y1="78" x2="1340" y2="78" stroke="#cbd5e1" stroke-width="1"/>
+
+  <!-- ============ Win11 Client ============ -->
+  <g filter="url(#cardShadow)">
+    <rect x="60" y="110" width="260" height="180" rx="14" fill="url(#gradClient)" stroke="#b45309" stroke-width="2"/>
+    <text x="190" y="138" font-size="17" font-weight="700" text-anchor="middle" fill="#7c2d12">Win11 Client</text>
+    <text x="190" y="158" font-size="12" text-anchor="middle" fill="#7c2d12" font-weight="600">192.168.0.233</text>
+    <line x1="80" y1="172" x2="300" y2="172" stroke="#b45309" stroke-opacity="0.3"/>
+    <text x="190" y="196" font-size="12" text-anchor="middle" fill="#374151">Browser konfiguriert:</text>
+    <text x="190" y="214" font-size="11" font-family="monospace" text-anchor="middle" fill="#0f172a">proxy=192.168.0.232:3128</text>
+    <text x="190" y="240" font-size="12" text-anchor="middle" fill="#374151">PHIMANTEC Root-CA installiert:</text>
+    <text x="190" y="258" font-size="10" font-family="monospace" text-anchor="middle" fill="#0f172a">certutil -addstore Root</text>
+    <text x="190" y="282" font-size="10" font-style="italic" text-anchor="middle" fill="#6b7280">about:config: http3=false, altsvc=false</text>
+  </g>
+
+  <!-- Pfeil: Win11 -> Proxy -->
+  <g>
+    <path d="M 320 200 C 420 200, 470 200, 560 200" stroke="#1d4ed8" stroke-width="3" fill="none" marker-end="url(#arrBlue)"/>
+    <rect x="345" y="160" width="200" height="32" rx="6" fill="#fff" stroke="#1d4ed8" stroke-width="1.5"/>
+    <text x="445" y="180" font-size="11" font-weight="700" text-anchor="middle" fill="#1d4ed8">
+      CONNECT host:443  ·  TLS
+    </text>
+  </g>
+
+  <!-- ============ Proxy-Host ============ -->
+  <g filter="url(#cardShadow)">
+    <rect x="560" y="110" width="780" height="660" rx="14" fill="url(#gradProxy)" stroke="#1e40af" stroke-width="2"/>
+    <text x="950" y="138" font-size="19" font-weight="700" text-anchor="middle" fill="#1e3a8a">
+      Proxy-Host — phimantec-proxyd v0.2.0
+    </text>
+    <text x="950" y="158" font-size="11" text-anchor="middle" fill="#1e40af">192.168.0.232 · Listener :3128 · C11 / OpenSSL 3.0 / pthread</text>
+    <line x1="580" y1="172" x2="1320" y2="172" stroke="#1e40af" stroke-opacity="0.3"/>
+
+    <!-- Worker-Loop-Box (NEU v0.2.0) - ueber alle Module -->
+    <rect x="580" y="190" width="740" height="60" rx="8" fill="url(#gradNew)" stroke="#be185d" stroke-width="2"/>
+    <text x="950" y="212" font-size="13" font-weight="700" text-anchor="middle" fill="#9d174d">
+      ★ NEU v0.2.0 — Worker-Schleife mit H1 Keep-Alive im CONNECT-Tunnel
+    </text>
+    <text x="950" y="232" font-size="10" text-anchor="middle" fill="#374151">
+      pro CONNECT mehrere H1-Requests · Slowloris-Schutz: max 1000 Req/Tunnel, 30s Idle-Timeout · eigene Flow-ID pro Iteration (-NNNN-Suffix)
+    </text>
+
+    <!-- Reihe 1: CONNECT / TLS-Bump / H1-Parser -->
+    <g>
+      <rect x="580" y="265" width="230" height="90" rx="8" fill="#fff" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="695" y="288" font-size="13" font-weight="700" text-anchor="middle" fill="#1e40af">① CONNECT Parser</text>
+      <text x="695" y="304" font-size="10" text-anchor="middle" fill="#334155" font-family="monospace">phim_connect_parser.c</text>
+      <text x="695" y="322" font-size="10" text-anchor="middle" fill="#475569">host:port · keep-alive</text>
+      <text x="695" y="342" font-size="10" font-style="italic" text-anchor="middle" fill="#64748b">→ 200 Connection Established</text>
+    </g>
+    <g>
+      <rect x="830" y="265" width="240" height="90" rx="8" fill="#fff" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="950" y="288" font-size="13" font-weight="700" text-anchor="middle" fill="#1e40af">② TLS-Bump (gecacht)</text>
+      <text x="950" y="304" font-size="10" text-anchor="middle" fill="#334155" font-family="monospace">phim_tls.c · phim_cert.c</text>
+      <text x="950" y="322" font-size="10" text-anchor="middle" fill="#475569">ECDSA P-256 · ALPN=h1</text>
+      <text x="950" y="342" font-size="10" font-style="italic" text-anchor="middle" fill="#64748b">Cert-Cache 1024 / CA-FP-Key</text>
+    </g>
+    <g>
+      <rect x="1090" y="265" width="230" height="90" rx="8" fill="#fff" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="1205" y="288" font-size="13" font-weight="700" text-anchor="middle" fill="#1e40af">③ H1 Parser + Chunked-Dec</text>
+      <text x="1205" y="304" font-size="10" text-anchor="middle" fill="#334155" font-family="monospace">phim_h1.c</text>
+      <text x="1205" y="322" font-size="10" text-anchor="middle" fill="#475569">Request/Response + Trailer</text>
+      <text x="1205" y="342" font-size="10" font-style="italic" text-anchor="middle" fill="#64748b">Alt-Svc-Strip (H3-Degrade)</text>
+    </g>
+
+    <!-- Reihe 2: Body-Inspection / Verdict-Engine -->
+    <g>
+      <rect x="580" y="375" width="490" height="115" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+      <text x="825" y="398" font-size="13" font-weight="700" text-anchor="middle" fill="#92400e">
+        ④ Response-Body-Inspection (3 Pfade)
+      </text>
+      <text x="825" y="416" font-size="10" text-anchor="middle" fill="#334155" font-family="monospace">
+        phim_forward_response_{fixed_length,chunked,until_close}()
+      </text>
+      <text x="825" y="436" font-size="10" text-anchor="middle" fill="#475569">Content-Length ≤ max_body_bytes → kompletter Pre-Buffer + 1× Inspection vor Auslieferung</text>
+      <text x="825" y="452" font-size="10" text-anchor="middle" fill="#475569">chunked → per-Chunk-Inspection via Decoder mit Overflow-Schutz</text>
+      <text x="825" y="468" font-size="10" text-anchor="middle" fill="#475569">close-delimited → per-Chunk-Inspection, danach Tunnel-Drop</text>
+      <text x="825" y="485" font-size="10" font-style="italic" text-anchor="middle" fill="#92400e">EICAR/Malware-Block VOR Client-Auslieferung garantiert</text>
+    </g>
+    <g>
+      <rect x="1090" y="375" width="230" height="115" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+      <text x="1205" y="398" font-size="13" font-weight="700" text-anchor="middle" fill="#991b1b">⑤ Verdict-Engine</text>
+      <text x="1205" y="416" font-size="10" text-anchor="middle" fill="#334155" font-family="monospace">phim_verdict.c</text>
+      <text x="1205" y="436" font-size="11" font-weight="700" text-anchor="middle" fill="#dc2626">FlowBus-Pool 4× RR</text>
+      <text x="1205" y="452" font-size="10" text-anchor="middle" fill="#475569">fail_policy: closed/open</text>
+      <text x="1205" y="470" font-size="10" font-style="italic" text-anchor="middle" fill="#64748b">Safety-Fallback bei Timeout</text>
+    </g>
+    <!-- FlowBus Slots Mini -->
+    <g>
+      <rect x="1095" y="498" width="50" height="22" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+      <text x="1120" y="514" font-size="10" font-weight="700" text-anchor="middle" fill="#991b1b">FB#0</text>
+      <rect x="1150" y="498" width="50" height="22" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+      <text x="1175" y="514" font-size="10" font-weight="700" text-anchor="middle" fill="#991b1b">FB#1</text>
+      <rect x="1205" y="498" width="50" height="22" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+      <text x="1230" y="514" font-size="10" font-weight="700" text-anchor="middle" fill="#991b1b">FB#2</text>
+      <rect x="1260" y="498" width="50" height="22" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+      <text x="1285" y="514" font-size="10" font-weight="700" text-anchor="middle" fill="#991b1b">FB#3</text>
+    </g>
+
+    <!-- Reihe 3: Lane-Pool, Upstream-Tunnel (NEU), Blockpage -->
+    <g>
+      <rect x="580" y="540" width="230" height="105" rx="8" fill="#fff" stroke="#0d9488" stroke-width="1.5"/>
+      <text x="695" y="562" font-size="13" font-weight="700" text-anchor="middle" fill="#115e59">⑥ Lane-Client-Pool</text>
+      <text x="695" y="578" font-size="10" text-anchor="middle" fill="#334155" font-family="monospace">phim_lane.c</text>
+      <text x="695" y="596" font-size="10" font-weight="600" text-anchor="middle" fill="#0d9488">4× persistent · auto-reconnect</text>
+      <text x="695" y="613" font-size="10" text-anchor="middle" fill="#475569">POST /phimantec/lane/{req,resp}</text>
+      <text x="695" y="631" font-size="10" font-style="italic" text-anchor="middle" fill="#64748b">HTTP/1.1 Keep-Alive zum Sink</text>
+    </g>
+    <g>
+      <rect x="830" y="540" width="240" height="105" rx="8" fill="url(#gradNew)" stroke="#be185d" stroke-width="1.5"/>
+      <text x="950" y="562" font-size="13" font-weight="700" text-anchor="middle" fill="#9d174d">⑦ Upstream-TLS (Reuse) ★</text>
+      <text x="950" y="578" font-size="10" text-anchor="middle" fill="#334155" font-family="monospace">phim_proxy_out.c</text>
+      <text x="950" y="596" font-size="10" font-weight="600" text-anchor="middle" fill="#be185d">Tunnel-lokaler Reuse (NEU)</text>
+      <text x="950" y="613" font-size="10" text-anchor="middle" fill="#475569">SSL_CTX-Cache 256 + Session-Cache</text>
+      <text x="950" y="631" font-size="10" font-style="italic" text-anchor="middle" fill="#64748b">Replay-Safe: nur GET/HEAD ohne Body</text>
+    </g>
+    <g>
+      <rect x="1090" y="540" width="230" height="105" rx="8" fill="#fff" stroke="#b91c1c" stroke-width="1.5"/>
+      <text x="1205" y="562" font-size="13" font-weight="700" text-anchor="middle" fill="#7f1d1d">⑧ Blockpage</text>
+      <text x="1205" y="578" font-size="10" text-anchor="middle" fill="#334155" font-family="monospace">phim_blockpage.c</text>
+      <text x="1205" y="596" font-size="10" text-anchor="middle" fill="#475569">HTTP 403 + HTML</text>
+      <text x="1205" y="613" font-size="10" text-anchor="middle" fill="#475569">Reason · SID · Flow-ID</text>
+      <text x="1205" y="631" font-size="10" font-style="italic" text-anchor="middle" fill="#64748b">Tunnel-Ende nach BLOCK</text>
+    </g>
+
+    <!-- Reihe 4: EVE-Index + Shared Core -->
+    <g>
+      <rect x="580" y="665" width="740" height="90" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1" stroke-dasharray="6 3"/>
+      <text x="950" y="687" font-size="12" font-weight="700" text-anchor="middle" fill="#334155">
+        Shared Core (libphimantec_core.a)
+      </text>
+      <text x="950" y="706" font-size="10" text-anchor="middle" fill="#475569">
+        phim_config · phim_socket (TCP_NODELAY) · phim_log · phim_time · phim_mem (secure_zero) · phim_string (ASCII-only)
+      </text>
+      <text x="950" y="724" font-size="10" text-anchor="middle" fill="#475569">
+        phim_flowbus (HMAC-SHA256 + Stack-Buffer ≤768B + Anti-Replay) · phim_h1 (Request/Response/Chunked-Decoder)
+      </text>
+      <text x="950" y="744" font-size="10" font-style="italic" text-anchor="middle" fill="#64748b">
+        Verifiziert: -Werror -Wpedantic -Wconversion · ASAN/UBSAN sauber · 7/7 CTests grün
+      </text>
+    </g>
+  </g>
+
+  <!-- ============ Upstream -> Internet (rechts ausserhalb der Proxy-Box) ============ -->
+  <g>
+    <path d="M 950 645 C 950 700, 1380 720, 1380 770" stroke="#7c3aed" stroke-width="2.5" fill="none" stroke-dasharray="8 4" marker-end="url(#arrPurple)"/>
+    <text x="1380" y="800" font-size="11" font-weight="600" text-anchor="middle" fill="#5b21b6">→ Internet (TLS)</text>
+    <text x="1380" y="816" font-size="9" font-style="italic" text-anchor="middle" fill="#5b21b6">amazon.de / youtube.com</text>
+  </g>
+
+  <!-- ============ Lane + FlowBus zu Suricata ============ -->
+  <g>
+    <!-- Lane -->
+    <path d="M 695 645 L 695 850" stroke="#15803d" stroke-width="3" fill="none" marker-end="url(#arrGreen)"/>
+    <rect x="555" y="755" width="200" height="42" rx="6" fill="#fff" stroke="#15803d" stroke-width="1.5"/>
+    <text x="655" y="772" font-size="11" font-weight="700" text-anchor="middle" fill="#15803d">
+      Lane (Klartext HTTP)
+    </text>
+    <text x="655" y="787" font-size="10" text-anchor="middle" fill="#15803d">TCP :18080 · Keep-Alive</text>
+  </g>
+  <g>
+    <!-- FlowBus -->
+    <path d="M 1205 645 L 1205 850" stroke="#c2410c" stroke-width="3" fill="none" marker-end="url(#arrOrange)"/>
+    <rect x="1095" y="755" width="220" height="58" rx="6" fill="#fff" stroke="#c2410c" stroke-width="1.5"/>
+    <text x="1205" y="772" font-size="11" font-weight="700" text-anchor="middle" fill="#c2410c">
+      FlowBus (PHFB + HMAC-SHA256)
+    </text>
+    <text x="1205" y="787" font-size="10" text-anchor="middle" fill="#c2410c">TCP :18090 · 4 persistente Conns</text>
+    <text x="1205" y="803" font-size="9" font-style="italic" text-anchor="middle" fill="#9a3412">timing-safe Compare · Anti-Replay seq</text>
+  </g>
+
+  <!-- ============ Suricata-Host ============ -->
+  <g filter="url(#cardShadow)">
+    <rect x="60" y="850" width="1280" height="380" rx="14" fill="url(#gradSuri)" stroke="#166534" stroke-width="2"/>
+    <text x="700" y="882" font-size="19" font-weight="700" text-anchor="middle" fill="#14532d">
+      Suricata-Host · IDS · EVE-Korrelation · Verdict-Server
+    </text>
+    <text x="700" y="902" font-size="11" text-anchor="middle" fill="#166534">
+      192.168.0.236 · Suricata 8 mit Hyperscan MPM/SPM · phimantec-lane-sink + phimantec-inspectord
+    </text>
+    <line x1="80" y1="918" x2="1320" y2="918" stroke="#166534" stroke-opacity="0.3"/>
+
+    <!-- Lane-Sink -->
+    <g>
+      <rect x="120" y="940" width="320" height="240" rx="10" fill="#fff" stroke="#15803d" stroke-width="2"/>
+      <text x="280" y="970" font-size="14" font-weight="700" text-anchor="middle" fill="#14532d">phimantec-lane-sink</text>
+      <text x="280" y="990" font-size="11" text-anchor="middle" fill="#334155" font-family="monospace">:18080 · TCP Keep-Alive</text>
+      <text x="280" y="1014" font-size="11" text-anchor="middle" fill="#475569">Empfaengt Lane-POSTs</text>
+      <text x="280" y="1032" font-size="11" text-anchor="middle" fill="#475569">vom Proxy-Pool</text>
+      <text x="280" y="1058" font-size="10" font-style="italic" text-anchor="middle" fill="#64748b">→ /var/log/phimantec/lane.jsonl</text>
+      <text x="280" y="1090" font-size="10" text-anchor="middle" fill="#475569" font-weight="600">Suricata sieht denselben Strom</text>
+      <text x="280" y="1108" font-size="10" text-anchor="middle" fill="#475569">auf dem Lane-Interface (AF_PACKET)</text>
+      <text x="280" y="1140" font-size="10" font-weight="600" text-anchor="middle" fill="#15803d" font-family="monospace">lane_sink_main.c</text>
+    </g>
+
+    <!-- Suricata 8 -->
+    <g>
+      <rect x="490" y="940" width="420" height="240" rx="10" fill="#ecfeff" stroke="#0e7490" stroke-width="2"/>
+      <text x="700" y="970" font-size="14" font-weight="700" text-anchor="middle" fill="#155e75">Suricata 8 IDS</text>
+      <text x="700" y="990" font-size="11" text-anchor="middle" fill="#334155" font-family="monospace">AF_PACKET · ens18 · cluster_flow</text>
+      <text x="700" y="1018" font-size="12" font-weight="700" text-anchor="middle" fill="#0e7490">
+        ★ Hyperscan MPM/SPM (v0.1.7+)
+      </text>
+      <text x="700" y="1036" font-size="11" text-anchor="middle" fill="#475569" font-family="monospace">mpm-algo: hs · spm-algo: hs</text>
+      <text x="700" y="1054" font-size="10" text-anchor="middle" fill="#475569">Fallback: ac-ks</text>
+      <text x="700" y="1080" font-size="11" font-weight="600" text-anchor="middle" fill="#155e75">Lab-Regeln (3 Signaturen)</text>
+      <text x="700" y="1098" font-size="10" text-anchor="middle" fill="#475569" font-family="monospace">SID 900001 — PATH BLOCK</text>
+      <text x="700" y="1114" font-size="10" text-anchor="middle" fill="#475569" font-family="monospace">SID 900002 — EICAR TEST FILE</text>
+      <text x="700" y="1130" font-size="10" text-anchor="middle" fill="#475569" font-family="monospace">SID 900003 — BODY BLOCK</text>
+      <text x="700" y="1158" font-size="10" font-weight="600" text-anchor="middle" fill="#0e7490">→ /var/log/suricata/eve.json</text>
+    </g>
+
+    <!-- Inspectord -->
+    <g>
+      <rect x="960" y="940" width="320" height="240" rx="10" fill="#fff" stroke="#c2410c" stroke-width="2"/>
+      <text x="1120" y="970" font-size="14" font-weight="700" text-anchor="middle" fill="#9a3412">phimantec-inspectord</text>
+      <text x="1120" y="990" font-size="11" text-anchor="middle" fill="#334155" font-family="monospace">:18090 · FlowBus-Server</text>
+      <text x="1120" y="1014" font-size="11" text-anchor="middle" fill="#475569">EVE-Index (inkrementell)</text>
+      <text x="1120" y="1032" font-size="10" text-anchor="middle" fill="#475569">dev/ino/size-Rotation erkannt</text>
+      <text x="1120" y="1058" font-size="10" text-anchor="middle" fill="#475569">4096 Alert-Slots · 120s TTL</text>
+      <text x="1120" y="1080" font-size="11" font-weight="600" text-anchor="middle" fill="#c2410c">Verdict-Logik 3-Stufen</text>
+      <text x="1120" y="1098" font-size="10" text-anchor="middle" fill="#475569">EVE-Lookup · Active-Wait ≤250ms</text>
+      <text x="1120" y="1114" font-size="10" text-anchor="middle" fill="#475569">EICAR-Body-Marker · Test-Pfade</text>
+      <text x="1120" y="1140" font-size="10" font-style="italic" text-anchor="middle" fill="#64748b">HMAC-Verify · Anti-Replay seq</text>
+      <text x="1120" y="1158" font-size="10" font-weight="600" text-anchor="middle" fill="#c2410c" font-family="monospace">inspectord_main.c</text>
+    </g>
+
+    <!-- Lane -> Suricata internal flow -->
+    <path d="M 440 1060 L 490 1060" stroke="#15803d" stroke-width="2" fill="none" marker-end="url(#arrGreen)" stroke-dasharray="3 3"/>
+    <text x="465" y="1051" font-size="9" text-anchor="middle" fill="#15803d">AF_PACKET</text>
+
+    <!-- Suricata -> Inspectord EVE -->
+    <path d="M 910 1080 L 960 1080" stroke="#0e7490" stroke-width="2" fill="none" marker-end="url(#arrGray)" stroke-dasharray="3 3"/>
+    <text x="935" y="1071" font-size="9" text-anchor="middle" fill="#0e7490">eve.json</text>
+  </g>
+
+  <!-- Verdict-Response Pfeil zurueck (FlowBus) - aussen rum nach rechts -->
+  <g>
+    <path d="M 1280 1180 C 1420 1100, 1450 900, 1380 850" stroke="#c2410c" stroke-width="1.5" fill="none" marker-end="url(#arrOrange)" stroke-dasharray="5 4" opacity="0.55"/>
+    <text x="1450" y="950" font-size="10" font-style="italic" text-anchor="end" fill="#c2410c">VERDICT_RESPONSE</text>
+    <text x="1450" y="965" font-size="9" font-style="italic" text-anchor="end" fill="#9a3412">allow / block</text>
+  </g>
+
+  <!-- Legende v0.2.0 -->
+  <g transform="translate(60, 1255)">
+    <text x="0" y="0" font-size="12" font-weight="700" fill="#0f172a">v0.2.0 Neuerungen:</text>
+    <circle cx="175" cy="-3" r="6" fill="url(#gradNew)" stroke="#be185d" stroke-width="1.5"/>
+    <text x="186" y="0" font-size="11" fill="#334155">H1 Keep-Alive (1 CONNECT = N Reqs)</text>
+    <circle cx="445" cy="-3" r="6" fill="url(#gradNew)" stroke="#be185d" stroke-width="1.5"/>
+    <text x="456" y="0" font-size="11" fill="#334155">Tunnel-lokaler Upstream-TLS-Reuse</text>
+    <circle cx="725" cy="-3" r="6" fill="url(#gradNew)" stroke="#be185d" stroke-width="1.5"/>
+    <text x="736" y="0" font-size="11" fill="#334155">Chunked-Decoder mit Trailer</text>
+    <circle cx="960" cy="-3" r="6" fill="url(#gradNew)" stroke="#be185d" stroke-width="1.5"/>
+    <text x="971" y="0" font-size="11" fill="#334155">Slowloris-Schutz (1000 Req / 30s Idle)</text>
+  </g>
+</svg>

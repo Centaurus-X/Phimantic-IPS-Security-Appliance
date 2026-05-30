@@ -1,0 +1,36 @@
+# Merge carefully into /etc/suricata/suricata.yaml on the Suricata host.
+# Replace ens18 with the isolated lane interface.
+
+af-packet:
+  - interface: ens18
+    cluster-id: 98
+    cluster-type: cluster_flow
+    defrag: yes
+    use-mmap: yes
+    tpacket-v3: yes
+
+outputs:
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: eve.json
+      types:
+        - alert:
+            payload: yes
+            payload-printable: yes
+            metadata: yes
+        - http:
+            extended: yes
+
+app-layer:
+  protocols:
+    http:
+      enabled: yes
+      libhtp:
+        default-config:
+          request-body-limit: 1048576
+          response-body-limit: 1048576
+          request-body-minimal-inspect-size: 1048576
+          request-body-inspect-window: 1048576
+          response-body-minimal-inspect-size: 1048576
+          response-body-inspect-window: 1048576

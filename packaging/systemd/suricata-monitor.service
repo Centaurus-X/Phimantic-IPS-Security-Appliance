@@ -1,0 +1,19 @@
+[Unit]
+Description=PHIMANTEC SuricataMonitor Web UI
+Documentation=file:/opt/phimantec/suricata-monitor/docs/INTEGRATION_PHIMANTEC.md
+After=network-online.target suricata-phimantec.service phimantec-inspectord.service
+Wants=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/phimantec/suricata-monitor
+Environment=SURIMON_CONFIG=/etc/phimantec/suricata-monitor.yaml
+ExecStart=/usr/bin/python3 /opt/phimantec/suricata-monitor/backend/app.py
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=8192
+
+[Install]
+WantedBy=multi-user.target

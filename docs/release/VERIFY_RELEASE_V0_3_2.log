@@ -1,0 +1,119 @@
+[verify] shell syntax
+[verify] python syntax
+[verify] suricata-monitor unit smoke
+suricata-monitor config-manager tests passed
+[verify] javascript syntax
+[verify] docker static sanity
+[verify-docker-static] complete
+[verify] cmake build + ctest
+-- The C compiler identification is GNU 14.2.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.5.5")
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Configuring done (2.1s)
+-- Generating done (0.1s)
+-- Build files have been written to: /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/build-verify
+[  5%] Building C object CMakeFiles/phimantec_core.dir/shared/src/phim_config.c.o
+[  5%] Building C object CMakeFiles/phimantec_core.dir/shared/src/phim_flowbus.c.o
+[  7%] Building C object CMakeFiles/phimantec_core.dir/shared/src/phim_eve.c.o
+[ 10%] Building C object CMakeFiles/phimantec_core.dir/shared/src/phim_base64.c.o
+[ 15%] Building C object CMakeFiles/phimantec_core.dir/shared/src/phim_h1.c.o
+[ 15%] Building C object CMakeFiles/phimantec_core.dir/shared/src/phim_log.c.o
+[ 17%] Building C object CMakeFiles/phimantec_core.dir/shared/src/phim_mem.c.o
+[ 20%] Building C object CMakeFiles/phimantec_core.dir/shared/src/phim_string.c.o
+[ 23%] Building C object CMakeFiles/phimantec_core.dir/shared/src/phim_socket.c.o
+[ 25%] Building C object CMakeFiles/phimantec_core.dir/shared/src/phim_time.c.o
+[ 28%] Building C object CMakeFiles/phimantec_core.dir/appliance/src/phim_blockpage.c.o
+[ 30%] Building C object CMakeFiles/phimantec_core.dir/appliance/src/phim_cert.c.o
+[ 33%] Building C object CMakeFiles/phimantec_core.dir/appliance/src/phim_connect_parser.c.o
+[ 35%] Building C object CMakeFiles/phimantec_core.dir/appliance/src/phim_lane.c.o
+[ 38%] Building C object CMakeFiles/phimantec_core.dir/appliance/src/phim_proxy_out.c.o
+[ 41%] Building C object CMakeFiles/phimantec_core.dir/appliance/src/phim_tls.c.o
+[ 43%] Building C object CMakeFiles/phimantec_core.dir/appliance/src/phim_verdict.c.o
+[ 46%] Linking C static library libphimantec_core.a
+[ 46%] Built target phimantec_core
+[ 51%] Building C object CMakeFiles/phimantec-proxyd.dir/appliance/src/main.c.o
+[ 53%] Building C object CMakeFiles/phimantec-proxyd.dir/appliance/src/phim_proxy_worker.c.o
+[ 53%] Building C object CMakeFiles/phimantec-inspectord.dir/suricata-node/src/inspectord_main.c.o
+[ 56%] Building C object CMakeFiles/test_connect_parser.dir/tests/test_connect_parser.c.o
+[ 58%] Building C object CMakeFiles/phimantec-lane-sink.dir/suricata-node/src/lane_sink_main.c.o
+[ 61%] Building C object CMakeFiles/test_h1_parser.dir/tests/test_h1_parser.c.o
+[ 64%] Building C object CMakeFiles/test_flowbus_hmac.dir/tests/test_flowbus_hmac.c.o
+[ 66%] Building C object CMakeFiles/test_eve_correlation.dir/tests/test_eve_correlation.c.o
+[ 69%] Building C object CMakeFiles/test_flowbus_write_read.dir/tests/test_flowbus_write_read.c.o
+[ 71%] Building C object CMakeFiles/test_verdict_timeout.dir/tests/test_verdict_timeout.c.o
+[ 74%] Building C object CMakeFiles/test_h1_chunked_decoder.dir/tests/test_h1_chunked_decoder.c.o
+[ 76%] Linking C executable test_connect_parser
+[ 82%] Linking C executable test_h1_chunked_decoder
+[ 82%] Linking C executable test_h1_parser
+[ 84%] Linking C executable test_eve_correlation
+[ 87%] Linking C executable test_verdict_timeout
+[ 89%] Linking C executable test_flowbus_hmac
+[ 92%] Linking C executable test_flowbus_write_read
+[ 94%] Linking C executable phimantec-lane-sink
+[ 97%] Linking C executable phimantec-inspectord
+[ 97%] Built target test_connect_parser
+[ 97%] Built target test_h1_parser
+[ 97%] Built target test_h1_chunked_decoder
+[ 97%] Built target test_eve_correlation
+[ 97%] Built target test_flowbus_hmac
+[ 97%] Built target test_verdict_timeout
+[ 97%] Built target test_flowbus_write_read
+[ 97%] Built target phimantec-lane-sink
+[100%] Linking C executable phimantec-proxyd
+[100%] Built target phimantec-inspectord
+[100%] Built target phimantec-proxyd
+Internal ctest changing into directory: /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/build-verify
+Test project /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/build-verify
+    Start 1: connect_parser
+1/7 Test #1: connect_parser ...................   Passed    0.02 sec
+    Start 2: h1_parser
+2/7 Test #2: h1_parser ........................   Passed    0.02 sec
+    Start 3: flowbus_hmac
+3/7 Test #3: flowbus_hmac .....................   Passed    0.02 sec
+    Start 4: flowbus_write_read
+4/7 Test #4: flowbus_write_read ...............   Passed    0.03 sec
+    Start 5: eve_correlation
+5/7 Test #5: eve_correlation ..................   Passed    0.02 sec
+    Start 6: verdict_timeout
+6/7 Test #6: verdict_timeout ..................   Passed    0.02 sec
+    Start 7: h1_chunked_decoder
+7/7 Test #7: h1_chunked_decoder ...............   Passed    0.02 sec
+
+100% tests passed, 0 tests failed out of 7
+
+Total Test time (real) =   0.17 sec
+[verify] vendor scripts no-source smoke
+[vendor-unpack] no source archives found; nothing unpacked
+[vendor-unpack] complete
+[vendor-patch] skip zlib: source directory missing in /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/third_party/build
+[vendor-patch] skip libyaml: source directory missing in /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/third_party/build
+[vendor-patch] skip jansson: source directory missing in /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/third_party/build
+[vendor-patch] skip pcre2: source directory missing in /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/third_party/build
+[vendor-patch] skip hyperscan: source directory missing in /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/third_party/build
+[vendor-patch] skip libpcap: source directory missing in /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/third_party/build
+[vendor-patch] skip libnet: source directory missing in /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/third_party/build
+[vendor-patch] skip libcap-ng: source directory missing in /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/third_party/build
+[vendor-patch] skip openssl: source directory missing in /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/third_party/build
+[vendor-patch] skip libhtp: source directory missing in /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/third_party/build
+[vendor-patch] skip suricata: source directory missing in /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/third_party/build
+[vendor-patch] complete
+[vendor-build] skip zlib: source missing
+[vendor-build] skip libyaml: source missing
+[vendor-build] skip jansson: source missing
+[vendor-build] skip pcre2: source missing
+[vendor-build] skip hyperscan: source missing
+[vendor-build] skip libpcap: source missing
+[vendor-build] skip libnet: source missing
+[vendor-build] skip libcap-ng: source missing
+[vendor-build] skip openssl: source missing
+[vendor-build] skip libhtp: source missing
+[vendor-build] skip suricata: source missing by policy
+[vendor-build] complete: /mnt/data/work_v032/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor/third_party/stage
+[verify] complete

@@ -1,0 +1,19 @@
+[verify] release guard: OK
+[verify] shell syntax: OK
+[verify] python syntax: OK
+[verify] suricata-monitor unit smoke: OK
+  - config-manager tests passed
+  - eve-reader cursor tests passed
+[verify] javascript syntax: OK
+[verify] docker static sanity: OK
+  - Suricata-only block gate checked
+  - strict Flow-ID EVE parser checked
+  - local rules HTTP-layer checked
+  - auto-loopback capture checked
+  - raw YAML read-only checked
+[verify] CA generation smoke: OK
+[verify] cmake build + ctest: OK
+  - 9/9 tests passed
+  - eve_correlation includes <uuid>TP/1.1 regression
+[verify] vendor scripts no-source smoke: OK
+[verify] complete

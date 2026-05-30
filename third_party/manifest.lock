@@ -1,0 +1,99 @@
+schema_version: 1
+profile: "phimantec-c11-appliance-v0.3.2-monitor-offline-vendor"
+stage_prefix: "third_party/stage"
+repository_policy:
+  default_bundle: "runtime"
+  runtime_libraries_dir: "runtime-libs"
+  debian_packages_dir: "offline-debs"
+  source_archives_dir: "third_party/sources"
+  suricata_source_in_repository: false
+  notes:
+    - "Suricata Source/Binaries, Hyperscan, glibc/Ubuntu-Systemlibs und Rulesets koennen gross werden."
+    - "Normale Admin-Bundles bleiben schlank: Docker Runtime Image + runtime-libs + SBOM + SHA256SUMS."
+    - "Air-Gap-/Developer-Rebuilds koennen offline-debs und third_party/sources ergaenzen."
+
+packages:
+  zlib:
+    archive_glob: "zlib-*.tar.gz"
+    bundle_tier: "runtime-libs"
+    build_system: "configure"
+    license: "Zlib"
+    source_required_for_default_bundle: false
+
+  libyaml:
+    archive_glob: "yaml-*.tar.gz|libyaml-*.tar.gz"
+    bundle_tier: "runtime-libs"
+    build_system: "autotools"
+    license: "MIT"
+    source_required_for_default_bundle: false
+
+  jansson:
+    archive_glob: "jansson-*.tar.gz"
+    bundle_tier: "runtime-libs"
+    build_system: "cmake"
+    license: "MIT"
+    source_required_for_default_bundle: false
+
+  pcre2:
+    version: "10.47"
+    archive: "pcre2-10.47.tar.gz"
+    bundle_tier: "runtime-libs"
+    build_system: "cmake"
+    license: "BSD-3-Clause"
+    source_required_for_default_bundle: false
+
+  hyperscan:
+    version: "5.4.2"
+    archive: "hyperscan-5.4.2.tar.gz"
+    bundle_tier: "airgap-source"
+    build_system: "cmake"
+    license: "BSD-3-Clause"
+    source_required_for_default_bundle: false
+    size_note: "vergleichsweise gross; fuer Runtime nur libhs/libhs_runtime aufnehmen"
+
+  libpcap:
+    archive_glob: "libpcap-*.tar.gz"
+    bundle_tier: "runtime-libs"
+    build_system: "autotools"
+    license: "BSD-3-Clause"
+    source_required_for_default_bundle: false
+
+  libnet:
+    archive_glob: "libnet-*.tar.gz"
+    bundle_tier: "runtime-libs"
+    build_system: "autotools"
+    license: "BSD/BSD-like"
+    source_required_for_default_bundle: false
+
+  libcap-ng:
+    archive_glob: "libcap-ng-*.tar.gz"
+    bundle_tier: "runtime-libs"
+    build_system: "autotools"
+    license: "LGPL-2.1-or-later"
+    source_required_for_default_bundle: false
+
+  openssl:
+    version: "3.5.6"
+    archive: "openssl-3.5.6.tar.gz"
+    bundle_tier: "runtime-libs-or-source"
+    build_system: "openssl-configure"
+    license: "Apache-2.0"
+    source_required_for_default_bundle: false
+
+  libhtp:
+    archive_glob: "libhtp-*.tar.gz"
+    bundle_tier: "runtime-libs"
+    build_system: "autotools"
+    license: "BSD-3-Clause"
+    source_required_for_default_bundle: false
+    note: "Je nach Suricata-Release ist libhtp eingebettet oder separat paketiert."
+
+  suricata:
+    version: "8.0.5"
+    archive: "suricata-8.0.5.tar.gz"
+    bundle_tier: "manual-airgap-source"
+    build_system: "autotools"
+    license: "GPL-2.0-only"
+    source_required_for_default_bundle: false
+    included_in_repository: false
+    size_note: "Source/Tree/Binaries bewusst nicht im Standard-Repository enthalten."

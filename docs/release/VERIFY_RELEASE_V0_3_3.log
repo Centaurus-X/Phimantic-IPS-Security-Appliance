@@ -1,0 +1,17 @@
+PHIMANTEC C11 Appliance v0.3.3 verification
+
+Status: passed for local static/source gates and ZIP-extracted CMake/CTest gate.
+
+Executed gates:
+- Bash syntax check for scripts/*.sh and docker/common/*.sh: OK
+- Python py_compile for SuricataMonitor backend/services/scripts: OK
+- SuricataMonitor config-manager unit smoke: OK
+- Docker/Compose static sanity: OK
+- Targeted C compile for phim_proxy_worker.c with -Werror: OK
+- ZIP manifest sha256 verification: OK
+- ZIP extraction sanity: OK
+- CMake configure from ZIP-extracted repository: OK
+- C build from ZIP-extracted repository: OK
+- CTest from ZIP-extracted repository: 7/7 OK
+
+Docker runtime build/up was not executed in this environment because no usable Docker Engine is available here. v0.3.3 ships scripts/phimantec_deploy.sh, scripts/phimantec_compose.sh, scripts/preflight_docker.sh and scripts/smoke_docker.sh as the runtime gates for the target host.

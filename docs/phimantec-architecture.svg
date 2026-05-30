@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1460" height="720" viewBox="0 0 1460 720" role="img" aria-labelledby="title desc">
+  <title id="title">Phimantic IPS Security Appliance Security Chain</title>
+  <desc id="desc">TLS-bump proxy, Suricata lane, EVE correlation, FlowBus verdict and strict proxy enforcement.</desc>
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .card { fill: #111827; stroke: #334155; stroke-width: 2; rx: 18; }
+      .client { fill: #fef3c7; stroke: #d97706; }
+      .proxy { fill: #dbeafe; stroke: #2563eb; }
+      .lane { fill: #dcfce7; stroke: #16a34a; }
+      .suricata { fill: #f0fdf4; stroke: #15803d; }
+      .verdict { fill: #fee2e2; stroke: #dc2626; }
+      .mgmt { fill: #f5f3ff; stroke: #7c3aed; }
+      .label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 24px; font-weight: 700; fill: #0f172a; }
+      .small { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 17px; fill: #334155; }
+      .whiteTitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 34px; font-weight: 800; fill: #f8fafc; }
+      .whiteSub { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 18px; fill: #cbd5e1; }
+      .arrow { stroke: #38bdf8; stroke-width: 4; fill: none; marker-end: url(#arrow); }
+      .alert { stroke: #f97316; stroke-width: 4; fill: none; marker-end: url(#arrowOrange); stroke-dasharray: 10 7; }
+      .block { stroke: #ef4444; stroke-width: 4; fill: none; marker-end: url(#arrowRed); }
+      .allow { stroke: #22c55e; stroke-width: 4; fill: none; marker-end: url(#arrowGreen); }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#38bdf8"/></marker>
+    <marker id="arrowOrange" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#f97316"/></marker>
+    <marker id="arrowRed" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#ef4444"/></marker>
+    <marker id="arrowGreen" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#22c55e"/></marker>
+  </defs>
+  <rect class="bg" width="1460" height="720"/>
+  <text x="48" y="62" class="whiteTitle">Phimantic IPS Security Appliance</text>
+  <text x="48" y="96" class="whiteSub">Strict Suricata-only HTTPS inspection with fail-closed enforcement</text>
+
+  <rect x="48" y="150" width="210" height="120" rx="18" class="client"/>
+  <text x="76" y="195" class="label">Client</text>
+  <text x="76" y="226" class="small">Browser uses proxy</text>
+  <text x="76" y="250" class="small">and trusts bump CA</text>
+
+  <rect x="335" y="125" width="255" height="170" rx="18" class="proxy"/>
+  <text x="365" y="175" class="label">Proxy container</text>
+  <text x="365" y="207" class="small">TLS bump + H1.1 only</text>
+  <text x="365" y="231" class="small">Alt-Svc / Upgrade stripped</text>
+  <text x="365" y="255" class="small">No malware heuristic</text>
+
+  <rect x="680" y="110" width="250" height="105" rx="18" class="lane"/>
+  <text x="710" y="153" class="label">Plain HTTP Lane</text>
+  <text x="710" y="184" class="small">127.0.0.1:18080</text>
+
+  <rect x="680" y="255" width="250" height="135" rx="18" class="suricata"/>
+  <text x="710" y="305" class="label">Suricata 8</text>
+  <text x="710" y="337" class="small">HTTP app-layer</text>
+  <text x="710" y="361" class="small">rules + EVE alerts</text>
+
+  <rect x="1010" y="155" width="282" height="160" rx="18" class="verdict"/>
+  <text x="1040" y="204" class="label">inspectord + FlowBus</text>
+  <text x="1040" y="236" class="small">EVE / Flow-ID correlation</text>
+  <text x="1040" y="260" class="small">HMAC protected verdicts</text>
+  <text x="1040" y="284" class="small">127.0.0.1:18090</text>
+
+  <rect x="335" y="430" width="255" height="120" rx="18" class="verdict"/>
+  <text x="365" y="476" class="label">Enforcement gate</text>
+  <text x="365" y="508" class="small">Allow only after final</text>
+  <text x="365" y="532" class="small">Suricata no-alert verdict</text>
+
+  <rect x="1010" y="455" width="282" height="115" rx="18" class="mgmt"/>
+  <text x="1040" y="500" class="label">Web management</text>
+  <text x="1040" y="532" class="small">events, rulesets, reloads</text>
+  <text x="1040" y="556" class="small">runtime status</text>
+
+  <path d="M258 210 H335" class="arrow"/>
+  <text x="275" y="195" class="whiteSub">CONNECT</text>
+  <path d="M590 180 H680" class="arrow"/>
+  <text x="610" y="165" class="whiteSub">sample</text>
+  <path d="M805 215 V255" class="arrow"/>
+  <path d="M930 325 C975 330 1005 285 1010 245" class="alert"/>
+  <text x="930" y="356" class="whiteSub">EVE alert / no-alert</text>
+  <path d="M1010 230 H590" class="allow"/>
+  <text x="710" y="246" class="whiteSub">final verdict</text>
+  <path d="M462 295 V430" class="arrow"/>
+  <path d="M590 490 C705 490 745 420 805 390" class="block"/>
+  <text x="625" y="465" class="whiteSub">block: 403</text>
+  <path d="M462 550 V610 H1360" class="allow"/>
+  <text x="700" y="638" class="whiteSub">allow: forward to origin and return response</text>
+  <path d="M1150 455 V315" class="arrow"/>
+  <text x="1166" y="405" class="whiteSub">rules reload</text>
+
+  <text x="48" y="675" class="whiteSub">Invariant: no final Suricata allow means no forwarding; timeout, pending or unavailable remains fail-closed.</text>
+</svg>

@@ -1,0 +1,32 @@
+PHIMANTEC v0.3.17 Final Verification
+Generated: 2026-05-30
+
+Checks executed locally in the release tree:
+
+[verify] release guard: PASS
+[verify] shell syntax: PASS
+[verify] python syntax: PASS
+[verify] suricata-monitor unit smoke: PASS
+[verify] PHIMANTEC v0.3.17 regression smoke: PASS
+[verify] javascript syntax: PASS
+[verify] docker static sanity: PASS
+[verify] CA generation smoke: PASS
+[verify] cmake configure: PASS
+[verify] cmake build: PASS
+[verify] ctest: PASS, 10/10 tests passed
+[verify] vendor scripts no-source smoke: PASS
+[verify] complete
+
+CTest result:
+  connect_parser: PASS
+  h1_parser: PASS
+  flowbus_hmac: PASS
+  flowbus_write_read: PASS
+  config_timeouts: PASS
+  eve_correlation: PASS
+  verdict_timeout: PASS
+  suricata_only_gate: PASS
+  h1_chunked_decoder: PASS
+  cert_generation: PASS
+
+Docker runtime execution was not performed in this sandbox environment.

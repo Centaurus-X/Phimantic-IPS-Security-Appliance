@@ -1,0 +1,51 @@
+# PHIMANTEC C11 Appliance - SuricataMonitor integration profile.
+# This profile is reusable outside Docker and keeps the monitor bound to the
+# Suricata node. The Web UI writes Suricata YAML/rules only after validation.
+
+server:
+  bind_host: "0.0.0.0"
+  bind_port: 5050
+  debug: false
+
+auth:
+  secret_key: "change-me-in-production"
+  token_ttl_minutes: 480
+  cookie_name: "surimon_token"
+  cookie_secure: false
+
+database:
+  path: "/var/lib/suricata-monitor/suricata-monitor.db"
+
+suricata:
+  socket_path: "/var/run/suricata/suricata-command.socket"
+  eve_path: "/var/log/suricata/eve.json"
+  config_path: "/etc/suricata/suricata.yaml"
+  rules_dir: "/var/lib/suricata/rules"
+  update_bin: "/usr/bin/suricata-update"
+  service_unit: "suricata-phimantec.service"
+  control_mode: "auto"
+  restart_command: ""
+  status_command: ""
+  reload_command: ""
+  mock_mode: false
+
+phimantec:
+  state_dir: "/var/lib/suricata-monitor"
+  persisted_config_path: "/var/lib/suricata-monitor/suricata.yaml.persisted"
+  runtime_override_path: "/var/lib/suricata-monitor/phimantec-runtime-overrides.env"
+  profile: "proxy-lane-ids"
+  lane_port: 18080
+  flowbus_port: 18090
+  local_rules_file: "phimantec-local.rules"
+  required_eve_file: "eve.json"
+  required_event_fields:
+    - "alert.payload-printable"
+  proxy_safe_notice: >-
+    PHIMANTEC nutzt Suricata als IDS/IPS-Analyse- und Signallieferant fuer die
+    entschluesselte Proxy-Lane. Blocking erfolgt weiterhin im Proxy ueber
+    FlowBus-Verdicts. Capture-Backend, EVE-Alert-Payload und Regeldateien
+    sollten deshalb nur bewusst geaendert werden.
+
+logging:
+  persistence_enabled: true
+  retention_days: 30

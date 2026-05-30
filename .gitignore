@@ -1,0 +1,23 @@
+build/
+build-asan/
+build-vendor/
+third_party/build/
+third_party/stage/
+*.o
+*.a
+*.so
+*.so.*
+*.dylib
+*.exe
+config/ca/*.key
+config/ca/*.crt
+suricata-monitor/data/
+suricata-monitor/backend/__pycache__/
+suricata-monitor/backend/**/__pycache__/
+.DS_Store
+
+# Vendored binary/runtime artefacts are intentionally allowed in these bundle tiers.
+!runtime-libs/**
+!offline-debs/**
+!third_party/sources/**
+!third_party/patches/**

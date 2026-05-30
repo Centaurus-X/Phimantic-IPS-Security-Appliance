@@ -1,0 +1,154 @@
+name: ${PHIMANTEC_COMPOSE_PROJECT_NAME:-phimantec-c11-v0318}
+
+services:
+  suricata-node:
+    build:
+      context: .
+      dockerfile: docker/suricata-node/Dockerfile
+      network: ${PHIMANTEC_DOCKER_BUILD_NETWORK:-host}
+      args:
+        UBUNTU_BASE: ${PHIMANTEC_UBUNTU_BASE:-ubuntu:24.04}
+        PHIMANTEC_APT_MIRROR: ${PHIMANTEC_APT_MIRROR:-}
+        PHIMANTEC_APT_SECURITY_MIRROR: ${PHIMANTEC_APT_SECURITY_MIRROR:-}
+        PHIMANTEC_APT_RETRIES: ${PHIMANTEC_APT_RETRIES:-0}
+        PHIMANTEC_APT_TIMEOUT: ${PHIMANTEC_APT_TIMEOUT:-12}
+        PHIMANTEC_APT_FORCE_IPV4: ${PHIMANTEC_APT_FORCE_IPV4:-1}
+        PHIMANTEC_SURICATA_APT_PPA: ${PHIMANTEC_SURICATA_APT_PPA:-ppa:oisf/suricata-stable}
+    image: phimantec/suricata-node:${PHIMANTEC_VERSION:-0.3.18-monitor-offline-vendor}
+    restart: unless-stopped
+    network_mode: host
+    stop_grace_period: 20s
+    ulimits:
+      nofile:
+        soft: 1048576
+        hard: 1048576
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      SURIMON_CONFIG: /etc/phimantec/suricata-monitor.yaml
+      PHIMANTEC_NODE_CONFIG: /etc/phimantec/phimantec-suricata-node.conf
+      PHIMANTEC_SURICATA_INTERFACE: ${PHIMANTEC_SURICATA_INTERFACE:-auto}
+      PHIMANTEC_SURICATA_RUNMODE: ${PHIMANTEC_SURICATA_RUNMODE:-workers}
+      PHIMANTEC_SURICATA_MPM: ${PHIMANTEC_SURICATA_MPM:-hs}
+      PHIMANTEC_SURICATA_SPM: ${PHIMANTEC_SURICATA_SPM:-hs}
+      PHIMANTEC_SURICATA_AF_PACKET_THREADS: ${PHIMANTEC_SURICATA_AF_PACKET_THREADS:-auto}
+      PHIMANTEC_SURICATA_BODY_LIMIT: ${PHIMANTEC_SURICATA_BODY_LIMIT:-1048576}
+      PHIMANTEC_SURICATA_ALLOW_AC_FALLBACK: ${PHIMANTEC_SURICATA_ALLOW_AC_FALLBACK:-1}
+      PHIMANTEC_REQUIRE_SURICATA8: ${PHIMANTEC_REQUIRE_SURICATA8:-1}
+      PHIMANTEC_FLOWBUS_TOKEN: ${PHIMANTEC_FLOWBUS_TOKEN:-phimantec-docker-token-change-me}
+      PHIMANTEC_FLOWBUS_POOL_SIZE: ${PHIMANTEC_FLOWBUS_POOL_SIZE:-16}
+      PHIMANTEC_FLOWBUS_TIMEOUT_MS: ${PHIMANTEC_FLOWBUS_TIMEOUT_MS:-3000}
+      PHIMANTEC_FLOWBUS_CONNECT_TIMEOUT_MS: ${PHIMANTEC_FLOWBUS_CONNECT_TIMEOUT_MS:-500}
+      PHIMANTEC_FLOWBUS_READ_TIMEOUT_MS: ${PHIMANTEC_FLOWBUS_READ_TIMEOUT_MS:-3000}
+      PHIMANTEC_FLOWBUS_KEEPALIVE: ${PHIMANTEC_FLOWBUS_KEEPALIVE:-0}
+      PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS: ${PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS:-900}
+      PHIMANTEC_INSPECTORD_NO_ALERT_GRACE_MS: ${PHIMANTEC_INSPECTORD_NO_ALERT_GRACE_MS:-100}
+      PHIMANTEC_PROXY_PORT: ${PHIMANTEC_PROXY_PORT:-3128}
+      PHIMANTEC_MONITOR_PORT: ${PHIMANTEC_MONITOR_PORT:-5050}
+      PHIMANTEC_LANE_PORT: ${PHIMANTEC_LANE_PORT:-127.0.0.1:18080}
+      PHIMANTEC_FLOWBUS_PORT_LOCAL: ${PHIMANTEC_FLOWBUS_PORT:-127.0.0.1:18090}
+      PHIMANTEC_APPLIANCE_MANAGE_INGRESS: ${PHIMANTEC_APPLIANCE_MANAGE_INGRESS:-1}
+      PHIMANTEC_APPLIANCE_REQUIRE_INGRESS: ${PHIMANTEC_APPLIANCE_REQUIRE_INGRESS:-1}
+      PHIMANTEC_APPLIANCE_INGRESS_IFACE: ${PHIMANTEC_APPLIANCE_INGRESS_IFACE:-auto}
+      PHIMANTEC_APPLIANCE_INGRESS_SOURCE: ${PHIMANTEC_APPLIANCE_INGRESS_SOURCE:-}
+    volumes:
+      - phimantec-suricata-log:/var/log/suricata
+      - phimantec-suricata-rules:/var/lib/suricata/rules
+      - phimantec-monitor-db:/var/lib/suricata-monitor
+    healthcheck:
+      test:
+        - CMD
+        - bash
+        - -lc
+        - "monitor=$${PHIMANTEC_MONITOR_PORT:-5050}; monitor=$${monitor##*:}; lane=$${PHIMANTEC_LANE_PORT:-127.0.0.1:18080}; lane=$${lane##*:}; flow=$${PHIMANTEC_FLOWBUS_PORT_LOCAL:-127.0.0.1:18090}; flow=$${flow##*:}; test -r /var/log/suricata/eve.json && </dev/tcp/127.0.0.1/$${monitor} && </dev/tcp/127.0.0.1/$${lane} && </dev/tcp/127.0.0.1/$${flow} && /usr/local/bin/phimantec-flowbus-probe -c $${PHIMANTEC_NODE_CONFIG:-/etc/phimantec/phimantec-suricata-node.conf} -t 1000"
+      interval: 10s
+      timeout: 3s
+      retries: 8
+      start_period: 20s
+    labels:
+      org.phimantec.stack: "c11-appliance"
+      org.phimantec.release: "0.3.18-monitor-offline-vendor"
+      org.phimantec.runtime-network: "host"
+
+  proxy:
+    build:
+      context: .
+      dockerfile: docker/proxy/Dockerfile
+      network: ${PHIMANTEC_DOCKER_BUILD_NETWORK:-host}
+      args:
+        UBUNTU_BASE: ${PHIMANTEC_UBUNTU_BASE:-ubuntu:24.04}
+        PHIMANTEC_APT_MIRROR: ${PHIMANTEC_APT_MIRROR:-}
+        PHIMANTEC_APT_SECURITY_MIRROR: ${PHIMANTEC_APT_SECURITY_MIRROR:-}
+        PHIMANTEC_APT_RETRIES: ${PHIMANTEC_APT_RETRIES:-0}
+        PHIMANTEC_APT_TIMEOUT: ${PHIMANTEC_APT_TIMEOUT:-12}
+        PHIMANTEC_APT_FORCE_IPV4: ${PHIMANTEC_APT_FORCE_IPV4:-1}
+    image: phimantec/proxy:${PHIMANTEC_VERSION:-0.3.18-monitor-offline-vendor}
+    restart: unless-stopped
+    network_mode: host
+    stop_grace_period: 20s
+    ulimits:
+      nofile:
+        soft: 1048576
+        hard: 1048576
+    depends_on:
+      suricata-node:
+        condition: service_healthy
+    environment:
+      PHIMANTEC_PROXY_CONFIG: /etc/phimantec/phimantec-proxyd.conf
+      PHIMANTEC_FLOWBUS_TOKEN: ${PHIMANTEC_FLOWBUS_TOKEN:-phimantec-docker-token-change-me}
+      PHIMANTEC_LANE_POOL_SIZE: ${PHIMANTEC_LANE_POOL_SIZE:-16}
+      PHIMANTEC_FLOWBUS_POOL_SIZE: ${PHIMANTEC_FLOWBUS_POOL_SIZE:-16}
+      PHIMANTEC_FLOWBUS_TIMEOUT_MS: ${PHIMANTEC_FLOWBUS_TIMEOUT_MS:-3000}
+      PHIMANTEC_FLOWBUS_CONNECT_TIMEOUT_MS: ${PHIMANTEC_FLOWBUS_CONNECT_TIMEOUT_MS:-500}
+      PHIMANTEC_FLOWBUS_READ_TIMEOUT_MS: ${PHIMANTEC_FLOWBUS_READ_TIMEOUT_MS:-3000}
+      PHIMANTEC_FLOWBUS_KEEPALIVE: ${PHIMANTEC_FLOWBUS_KEEPALIVE:-0}
+      PHIMANTEC_PROXY_VERDICT_TIMEOUT_MS: ${PHIMANTEC_PROXY_VERDICT_TIMEOUT_MS:-3000}
+      PHIMANTEC_PROXY_VERDICT_TIMEOUT_UNDER_LOAD_MS: ${PHIMANTEC_PROXY_VERDICT_TIMEOUT_UNDER_LOAD_MS:-8000}
+      PHIMANTEC_PROXY_PORT: ${PHIMANTEC_PROXY_PORT:-3128}
+      PHIMANTEC_LANE_PORT: ${PHIMANTEC_LANE_PORT:-127.0.0.1:18080}
+      PHIMANTEC_FLOWBUS_PORT_LOCAL: ${PHIMANTEC_FLOWBUS_PORT:-127.0.0.1:18090}
+      PHIMANTEC_HTTP_MODE: ${PHIMANTEC_HTTP_MODE:-h1_only}
+      PHIMANTEC_DOWNSTREAM_ALPN: ${PHIMANTEC_DOWNSTREAM_ALPN:-http/1.1}
+      PHIMANTEC_UPSTREAM_ALPN: ${PHIMANTEC_UPSTREAM_ALPN:-http/1.1}
+      PHIMANTEC_STRIP_ALT_SVC: ${PHIMANTEC_STRIP_ALT_SVC:-1}
+      PHIMANTEC_STRIP_UPGRADE_HEADERS: ${PHIMANTEC_STRIP_UPGRADE_HEADERS:-1}
+      PHIMANTEC_PRECONNECT_GRACE_MS: ${PHIMANTEC_PRECONNECT_GRACE_MS:-250}
+      PHIMANTEC_FIRST_REQUEST_TIMEOUT_MS: ${PHIMANTEC_FIRST_REQUEST_TIMEOUT_MS:-1500}
+      PHIMANTEC_IDLE_TUNNEL_TIMEOUT_MS: ${PHIMANTEC_IDLE_TUNNEL_TIMEOUT_MS:-30000}
+      PHIMANTEC_SAMPLE_TARGET_BYTES: ${PHIMANTEC_SAMPLE_TARGET_BYTES:-524288}
+      PHIMANTEC_SAMPLE_MAX_BYTES: ${PHIMANTEC_SAMPLE_MAX_BYTES:-1048576}
+      PHIMANTEC_STREAM_CHUNK_MIN_BYTES: ${PHIMANTEC_STREAM_CHUNK_MIN_BYTES:-524288}
+      PHIMANTEC_INSPECTION_QUEUE_MAX: ${PHIMANTEC_INSPECTION_QUEUE_MAX:-1024}
+      PHIMANTEC_INSPECTION_QUEUE_WAIT_MS: ${PHIMANTEC_INSPECTION_QUEUE_WAIT_MS:-3000}
+      PHIMANTEC_INSPECTION_MAX_INFLIGHT: ${PHIMANTEC_INSPECTION_MAX_INFLIGHT:-128}
+      PHIMANTEC_INSPECTION_MAX_INFLIGHT_PER_HOST: ${PHIMANTEC_INSPECTION_MAX_INFLIGHT_PER_HOST:-32}
+      PHIMANTEC_INSPECTION_MAX_INFLIGHT_PER_CLIENT: ${PHIMANTEC_INSPECTION_MAX_INFLIGHT_PER_CLIENT:-96}
+      PHIMANTEC_INSPECTION_FAIL_POLICY: ${PHIMANTEC_INSPECTION_FAIL_POLICY:-closed}
+      PHIMANTEC_CA_CN: ${PHIMANTEC_CA_CN:-PHIMANTEC C11 Docker Lab Root CA}
+      PHIMANTEC_REGENERATE_CA: ${PHIMANTEC_REGENERATE_CA:-0}
+    volumes:
+      - phimantec-ca:/etc/phimantec/ca
+      - phimantec-cert-cache:/var/cache/phimantec/certs
+      - phimantec-suricata-log:/var/log/suricata:ro
+    healthcheck:
+      test:
+        - CMD
+        - bash
+        - -lc
+        - "proxy=$${PHIMANTEC_PROXY_PORT:-3128}; proxy=$${proxy##*:}; lane=$${PHIMANTEC_LANE_PORT:-127.0.0.1:18080}; lane=$${lane##*:}; flow=$${PHIMANTEC_FLOWBUS_PORT_LOCAL:-127.0.0.1:18090}; flow=$${flow##*:}; test -r /var/log/suricata/eve.json && </dev/tcp/127.0.0.1/$${proxy} && </dev/tcp/127.0.0.1/$${lane} && </dev/tcp/127.0.0.1/$${flow} && /usr/local/bin/phimantec-flowbus-probe -c $${PHIMANTEC_PROXY_CONFIG:-/etc/phimantec/phimantec-proxyd.conf} -t 1000"
+      interval: 10s
+      timeout: 3s
+      retries: 8
+      start_period: 10s
+    labels:
+      org.phimantec.stack: "c11-appliance"
+      org.phimantec.release: "0.3.18-monitor-offline-vendor"
+      org.phimantec.runtime-network: "host"
+
+volumes:
+  phimantec-ca:
+  phimantec-cert-cache:
+  phimantec-suricata-log:
+  phimantec-suricata-rules:
+  phimantec-monitor-db:

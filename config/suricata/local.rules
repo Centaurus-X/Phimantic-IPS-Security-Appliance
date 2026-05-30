@@ -1,0 +1,13 @@
+# PHIMANTEC lab rule set for Suricata 8.
+# Suricata is the only blocking decision source. The proxy never blocks on
+# local content heuristics. A block verdict is emitted only when inspectord can
+# correlate a Suricata EVE alert to the PHIMANTEC Flow-ID.
+#
+# The clear lane is an HTTP POST to phimantec-lane-sink on TCP/18080:
+#   POST /phimantec/lane/<direction>/<flow_id> HTTP/1.1
+# The original request/response sample is carried as HTTP request body.
+
+alert http any any -> any 18080 (msg:"PHIMANTEC BODY BLOCK"; flow:established,to_server; http.uri; content:"/phimantec/lane/"; http.request_body; content:"PHIMANTEC_TEST_BLOCK"; sid:900001; rev:4;)
+alert http any any -> any 18080 (msg:"PHIMANTEC EICAR TEST FILE"; flow:established,to_server; http.uri; content:"/phimantec/lane/"; http.request_body; content:"EICAR-STANDARD-ANTIVIRUS-TEST-FILE"; nocase; sid:900002; rev:2;)
+alert http any any -> any 18080 (msg:"PHIMANTEC EICAR TEST PATH"; flow:established,to_server; http.uri; content:"/phimantec/lane/"; http.header; content:"X-Phim-Path|3a|"; nocase; content:"eicar"; nocase; distance:0; within:256; sid:900004; rev:1;)
+alert http any any -> any 18080 (msg:"PHIMANTEC SURICATA PATH BLOCK"; flow:established,to_server; http.uri; content:"/phimantec/lane/"; http.header; content:"X-Phim-Path|3a|"; nocase; content:"/suricata-block"; nocase; sid:900003; rev:4;)

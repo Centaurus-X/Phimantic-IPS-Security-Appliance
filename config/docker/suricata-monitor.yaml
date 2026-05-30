@@ -1,0 +1,44 @@
+server:
+  bind_host: "0.0.0.0"
+  bind_port: 5050
+  debug: false
+
+auth:
+  secret_key: "change-me-in-production"
+  token_ttl_minutes: 480
+  cookie_name: "surimon_token"
+  cookie_secure: false
+
+database:
+  path: "/var/lib/suricata-monitor/suricata-monitor.db"
+
+suricata:
+  socket_path: "/var/run/suricata/suricata-command.socket"
+  eve_path: "/var/log/suricata/eve.json"
+  config_path: "/etc/suricata/suricata.yaml"
+  rules_dir: "/var/lib/suricata/rules"
+  update_bin: "/usr/bin/suricata-update"
+  service_unit: "suricata-phimantec.service"
+  control_mode: "socket"
+  restart_command: ""
+  status_command: "pidof suricata >/dev/null"
+  reload_command: ""
+  mock_mode: false
+
+phimantec:
+  state_dir: "/var/lib/suricata-monitor"
+  persisted_config_path: "/var/lib/suricata-monitor/suricata.yaml.persisted"
+  runtime_override_path: "/var/lib/suricata-monitor/phimantec-runtime-overrides.env"
+  profile: "docker-proxy-lane-ids"
+  lane_port: 18080
+  flowbus_port: 18090
+  local_rules_file: "phimantec-local.rules"
+  required_eve_file: "eve.json"
+  proxy_safe_notice: >-
+    Docker-Lab-Profil: Suricata sollte die Container-Lane beobachten. EVE-Alert
+    payload-printable und phimantec-local.rules sind fuer die Proxy-Verdicts
+    erforderlich.
+
+logging:
+  persistence_enabled: true
+  retention_days: 30

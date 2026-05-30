@@ -1,0 +1,2234 @@
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/.env.example /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/.env.example
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/.env.example	2026-05-29 21:12:23.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/.env.example	2026-05-29 22:31:48.950694474 +0000
+@@ -1,9 +1,9 @@
+-PHIMANTEC_VERSION=0.3.13-monitor-offline-vendor
+-PHIMANTEC_COMPOSE_PROJECT_NAME=phimantec-c11-v0313
+-PHIMANTEC_COMPOSE_PROJECT=phimantec-c11-v0313
++PHIMANTEC_VERSION=0.3.17-monitor-offline-vendor
++PHIMANTEC_COMPOSE_PROJECT_NAME=phimantec-c11-v0317
++PHIMANTEC_COMPOSE_PROJECT=phimantec-c11-v0317
+ 
+ # Externe Appliance-Ports.
+-# v0.3.13 nutzt host-network statt Docker-Userland-Proxy/NAT fuer Proxy und Webmanagement.
++# v0.3.14 nutzt host-network statt Docker-Userland-Proxy/NAT fuer Proxy und Webmanagement.
+ # Dadurch verschwinden 127.0.0.1-Publish-/Docker-NAT-Sonderfaelle.
+ PHIMANTEC_PROXY_PORT=3128
+ PHIMANTEC_MONITOR_PORT=5050
+@@ -19,7 +19,23 @@
+ PHIMANTEC_LANE_POOL_SIZE=4
+ PHIMANTEC_FLOWBUS_POOL_SIZE=4
+ PHIMANTEC_PROXY_VERDICT_TIMEOUT_MS=2500
+-PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS=1200
++PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS=2500
++
++# v0.3.14: H1.1-only mode und stabilere Seitenladung ohne Security-Bypass.
++PHIMANTEC_HTTP_MODE=h1_only
++PHIMANTEC_DOWNSTREAM_ALPN=http/1.1
++PHIMANTEC_UPSTREAM_ALPN=http/1.1
++PHIMANTEC_STRIP_ALT_SVC=1
++PHIMANTEC_STRIP_UPGRADE_HEADERS=1
++PHIMANTEC_PRECONNECT_GRACE_MS=250
++PHIMANTEC_FIRST_REQUEST_TIMEOUT_MS=1500
++PHIMANTEC_IDLE_TUNNEL_TIMEOUT_MS=30000
++PHIMANTEC_SAMPLE_TARGET_BYTES=65536
++PHIMANTEC_SAMPLE_MAX_BYTES=1048576
++PHIMANTEC_STREAM_CHUNK_MIN_BYTES=32768
++PHIMANTEC_LANE_KEEPALIVE=1
++PHIMANTEC_FLOWBUS_KEEPALIVE=1
++PHIMANTEC_INSPECTION_FAIL_POLICY=closed
+ 
+ # host-network runtime: auto setzt bei lokaler Lane automatisch lo, sonst das Host-Interface.
+ PHIMANTEC_SURICATA_INTERFACE=auto
+@@ -32,11 +48,11 @@
+ 
+ PHIMANTEC_DOCKER_BUILD_NETWORK=host
+ 
+-# v0.3.13 Appliance-Runtime.
++# v0.3.14 Appliance-Runtime.
+ # host = Dienste binden direkt im Host-Netzwerk; keine Docker-Port-NAT-Kette.
+ PHIMANTEC_RUNTIME_NETWORK=host
+ 
+-# v0.3.13: Ingress-Regeln werden durch das Appliance-Setup idempotent gesetzt.
++# v0.3.14: Ingress-Regeln werden durch das Appliance-Setup idempotent gesetzt.
+ # Das ist kein manuelles Host-Gefrickel, sondern Teil des Release-Setups.
+ PHIMANTEC_APPLIANCE_MANAGE_INGRESS=1
+ PHIMANTEC_APPLIANCE_INGRESS_IFACE=auto
+@@ -76,11 +92,11 @@
+ # 0 = lokaler Smoke ohne Internet; 1 = optionaler externer Proxy-Test.
+ PHIMANTEC_SMOKE_EXTERNAL=0
+ 
+-# v0.3.13: Suricata wird aus dem OISF-PPA installiert und muss >= 8 sein.
++# v0.3.14: Suricata wird aus dem OISF-PPA installiert und muss >= 8 sein.
+ PHIMANTEC_SURICATA_APT_PPA=ppa:oisf/suricata-stable
+ PHIMANTEC_REQUIRE_SURICATA8=1
+ 
+-# v0.3.13: Root-CA muss browserfaehige CA-Erweiterungen besitzen.
++# v0.3.14: Root-CA muss browserfaehige CA-Erweiterungen besitzen.
+ # 0 = bestehende gueltige CA behalten; 1 = neue Root-CA erzeugen und exportieren.
+ PHIMANTEC_CA_CN=PHIMANTEC C11 Docker Lab Root CA
+ PHIMANTEC_REGENERATE_CA=0
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/BUILD_INFO.txt /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/BUILD_INFO.txt
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/BUILD_INFO.txt	2026-05-29 21:12:23.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/BUILD_INFO.txt	2026-05-29 22:31:47.755384007 +0000
+@@ -1,5 +1,5 @@
+-PHIMANTEC_VERSION=0.3.13-monitor-offline-vendor
+-RELEASE_NAME=phimantec-c11-appliance-v0.3.13-monitor-offline-vendor
++PHIMANTEC_VERSION=0.3.17-monitor-offline-vendor
++RELEASE_NAME=phimantec-c11-appliance-v0.3.17-monitor-offline-vendor
+ BUILD_MODE=monitor-offline-vendor-lite
+ UBUNTU_BASE=ubuntu:24.04
+ SURICATA_SOURCE_INCLUDED=false
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/CMakeLists.txt /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/CMakeLists.txt
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/CMakeLists.txt	2026-05-29 21:12:23.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/CMakeLists.txt	2026-05-29 22:31:47.756156413 +0000
+@@ -1,5 +1,5 @@
+ cmake_minimum_required(VERSION 3.20)
+-project(phimantec_c11_appliance VERSION 0.3.13 LANGUAGES C)
++project(phimantec_c11_appliance VERSION 0.3.14 LANGUAGES C)
+ 
+ set(CMAKE_C_STANDARD 11)
+ set(CMAKE_C_STANDARD_REQUIRED ON)
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/README.md /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/README.md
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/README.md	2026-05-29 21:15:46.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/README.md	2026-05-29 22:35:02.012045465 +0000
+@@ -1,13 +1,13 @@
+-# PHIMANTEC C11 Appliance v0.3.13-monitor-offline-vendor
++# PHIMANTEC C11 Appliance v0.3.17-monitor-offline-vendor
+ 
+-PHIMANTEC v0.3.13 ist ein minimal-invasiver Enforcement-Patch auf Basis von v0.3.12. Das Sicherheitsmodell bleibt bewusst unveraendert: **Suricata ist der einzige fachliche Malware- und Pattern-Entscheider**. Der Proxy erkennt keine Malware selbst, fuehrt keine EICAR-Heuristik aus und baut kein alternatives Blocking-Gate ein.
++PHIMANTEC v0.3.14 ist ein minimal-invasiver Performance- und Stabilitaetspatch auf Basis von v0.3.13. Das Sicherheitsmodell bleibt bewusst unveraendert: **Suricata ist der einzige fachliche Malware- und Pattern-Entscheider**. Der Proxy erkennt keine Malware selbst, fuehrt keine EICAR-Heuristik aus und baut kein alternatives Blocking-Gate ein.
+ 
+ ## Sicherheitsmodell
+ 
+ ```text
+ Browser/Client
+   -> PHIMANTEC Proxy TLS-Bump
+-  -> entschluesselter Klartext-Flow zur lokalen Lane
++  -> entschluesselter Plain-HTTP-Flow zur lokalen Lane
+   -> Suricata AF_PACKET / HTTP-App-Layer / EVE
+   -> inspectord korreliert Suricata-EVE mit PHIMANTEC Flow-ID
+   -> Proxy erzwingt ausschliesslich das finale Suricata-Verdict
+@@ -19,44 +19,63 @@
+ Kein finales Suricata-Allow -> kein Forwarding.
+ ```
+ 
+-Final bedeutet in v0.3.13:
++Final bedeutet:
+ 
+ ```text
+ suricata-alert          -> block
+ suricata-no-alert-final -> allow
+ suricata-pending        -> warten / nicht forwarden
+-suricata-unavailable    -> fail-closed / 503 Inspection unavailable
++suricata-unavailable    -> fail-closed / 503 Inspection unavailable oder Close
+ ```
+ 
+-Damit wird der fruehere Race-Zustand beseitigt, bei dem ein fruehes `suricata-no-alert` an den Proxy ging und ein spaeterer EVE-Alert erst nach dem Client-Forwarding sichtbar wurde.
+-
+-## Wichtige Aenderungen in v0.3.13
++## Wichtige Aenderungen in v0.3.14
+ 
+ ```text
+-Deterministische Suricata-Verdict-Barriere:
+-  inspectord finalisiert no-alert nicht sofort.
+-  Der EVE-Cursor und die Lane-Flow-Korrelation werden bis zum Timeout beobachtet.
+-  Alert gewinnt immer gegen einen vorher gesehenen No-Alert-Status.
++H1.1-Only Mode:
++  Browser <-> Proxy und Proxy <-> Zielserver werden auf HTTP/1.1 normalisiert.
++  Der Proxy implementiert keinen H2/H3-Stack und laesst keine H2/H3-Tunnel ungeprueft durch.
++
++Transport-Header-Normalisierung:
++  Alt-Svc, Alt-Used, HTTP2-Settings, Upgrade und Connection-Upgrade-Hinweise
++  werden aus Responses entfernt, damit Browser nicht auf H2/H3/QUIC ausweichen.
+ 
+-Pending/Error-Verdicts:
+-  FlowBus transportiert jetzt allow, block, pending und error.
+-  Der Proxy behandelt pending/error nicht als Allow.
+-  FlowBus-/Suricata-Ausfall ist kein stilles Allow mehr.
++Preconnect/Idle-Tunnel:
++  Speculative Browser-Verbindungen ohne ersten H1-Request werden sauber und schnell geschlossen.
++  Das reduziert "failed to read first H1 request"-Rauschen und haengende Idle-Tunnel.
+ 
+-Fail-closed Forwarding:
+-  Response-Body wird nur nach finalem Suricata-Allow an den Client geschrieben.
+-  Bei Timeout/Unavailable sendet der Proxy vor Header-Forwarding HTTP 503.
+-  Nach bereits gesendeten Headern wird der Stream geschlossen, ohne eine verschachtelte Blockpage einzuschleusen.
++Segmentierte Response-Inspection:
++  Grosse Responses werden nicht mehr komplett bis 1 MiB gepuffert, bevor der Client
++  erste erlaubte Bytes erhaelt. Stattdessen prueft der Proxy jedes Segment ueber Suricata
++  und forwardet nur final erlaubte Segmente.
+ 
+-Deterministisches Body-Buffering:
+-  Fixed-Length-, Chunked- und Until-Close-Responses werden bis zum konfigurierten
+-  Inspection-Limit gepuffert, an Suricata gegeben und erst danach forwarded.
+-  Zu grosse Bodies werden nicht teil-forwarded, sondern fail-closed behandelt.
++Chunked Request-Body-Inspection:
++  Chunked Request-Bodies werden nun gepuffert und ueber Suricata inspiziert.
++  Das alte MVP-Verhalten "Header-only bei chunked Request" ist geschlossen.
+ 
+-Suricata-Testregeln:
+-  Die bestehende EICAR-Content-Regel bleibt erhalten.
+-  Eine zusaetzliche Suricata-Regel erkennt EICAR-Testpfade ueber die Lane-Header,
+-  damit auch verpackte EICAR-Testdateien als Suricata-Pattern-Entscheidung blocken.
++Fail-closed bleibt erhalten:
++  Pending, Timeout, FlowBus-Error und Suricata-Unavailable werden nicht als Allow behandelt.
++```
++
++## Wichtige Konfigurationswerte
++
++```env
++PHIMANTEC_HTTP_MODE=h1_only
++PHIMANTEC_DOWNSTREAM_ALPN=http/1.1
++PHIMANTEC_UPSTREAM_ALPN=http/1.1
++PHIMANTEC_STRIP_ALT_SVC=1
++PHIMANTEC_STRIP_UPGRADE_HEADERS=1
++
++PHIMANTEC_PRECONNECT_GRACE_MS=250
++PHIMANTEC_FIRST_REQUEST_TIMEOUT_MS=1500
++PHIMANTEC_IDLE_TUNNEL_TIMEOUT_MS=30000
++
++PHIMANTEC_PROXY_VERDICT_TIMEOUT_MS=2500
++PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS=2500
++PHIMANTEC_INSPECTION_FAIL_POLICY=closed
++
++PHIMANTEC_SAMPLE_TARGET_BYTES=65536
++PHIMANTEC_SAMPLE_MAX_BYTES=1048576
++PHIMANTEC_STREAM_CHUNK_MIN_BYTES=32768
+ ```
+ 
+ ## Schnelltest auf dem Zielhost
+@@ -65,10 +84,10 @@
+ cd "$HOME"
+ 
+ docker ps -a --filter "name=phimantec" -q | xargs -r docker rm -f
+-rm -rf phimantec-c11-appliance-v0.3.13-monitor-offline-vendor
++rm -rf phimantec-c11-appliance-v0.3.17-monitor-offline-vendor
+ 
+-unzip -q -o phimantec-v0.3.13-release.zip
+-cd phimantec-c11-appliance-v0.3.13-monitor-offline-vendor
++unzip -q -o phimantec-v0.3.14-release.zip
++cd phimantec-c11-appliance-v0.3.17-monitor-offline-vendor
+ 
+ sha256sum -c MANIFEST.sha256
+ rm -f .env
+@@ -79,50 +98,34 @@
+ scripts/phimantec_smoke.sh
+ ```
+ 
+-## Erwartete Runtime-Pruefungen
++## EICAR-Matrix-Test
+ 
+ ```bash
+-scripts/phimantec_compose.sh compose exec -T suricata-node sh -lc '
+-grep -nE "^[[:space:]]*(mpm-algo|spm-algo|runmode):" /etc/suricata/suricata.yaml
+-python3 - <<PY
+-import yaml
+-with open("/etc/suricata/suricata.yaml", "r", encoding="utf-8", errors="replace") as handle:
+-    data = yaml.safe_load(handle) or {}
+-http = data["app-layer"]["protocols"]["http"]["libhtp"]["default-config"]
+-for key in ("request-body-limit", "response-body-limit", "request-body-inspect-window"):
+-    print(key, http.get(key))
+-PY
+-'
++PROXY_URL=http://127.0.0.1:3128 scripts/eicar_url_matrix_test.sh
+ ```
+ 
+ Erwartung:
+ 
+ ```text
+-mpm-algo: hs
+-spm-algo: hs
+-runmode: workers
+-request-body-limit 1048576
+-response-body-limit 1048576
+-request-body-inspect-window 1048576
++kein EICAR-Klartext im Client-Body
++erkannte Suricata-Alerts blocken
++Timeout/Error/Pending forwarden nicht
+ ```
+ 
+-## EICAR-Matrix-Test
++## H1.1-/Alt-Svc-Test
+ 
+ ```bash
+-PROXY_URL=http://127.0.0.1:3128 scripts/eicar_url_matrix_test.sh
++curl -k -x http://127.0.0.1:3128 -I https://www.youtube.com/ \
++  | grep -iE 'alt-svc|upgrade|http2-settings' || true
+ ```
+ 
+-Der Test nutzt Cache-Busting und `Connection: close`. Er prueft, ob EICAR im Client-Body oder in einfachen Archiven sichtbar/leakbar ist. Erwartung: kein EICAR-Leak; erkannte Suricata-Alerts blocken als `suricata-alert`, fehlende/verspaetete Inspection endet fail-closed.
++Erwartung: keine Ausgabe fuer Alt-Svc/Upgrade/HTTP2-Settings.
+ 
+ ## Logs pruefen
+ 
+ ```bash
+-scripts/phimantec_compose.sh compose logs --no-color suricata-node \
+-  | grep -E 'verdict flow=.*action=(block|allow|pending|error)' \
+-  | tail -40
+-
+-scripts/phimantec_compose.sh compose exec -T suricata-node sh -lc \
+-  'grep -aE "900002|900004|PHIMANTEC EICAR|suricata-alert" /var/log/suricata/eve.json | tail -40'
++scripts/phimantec_compose.sh compose logs --no-color --tail=500 proxy suricata-node \
++  | grep -E 'inspection|suricata-alert|pending|unavailable|timeout|failed to read first H1' || true
+ ```
+ 
+ Ein sauberer Block sieht im inspectord-Log so aus:
+@@ -146,3 +149,13 @@
+ ```
+ 
+ Alte PHIMANTEC-CAs im Browser sollten vorher entfernt werden.
++
++## Dokumentation
++
++```text
++docs/H1_ONLY_PAGE_LOADING_V0_3_14.md
++docs/OPEN_POINTS_DEPLOYMENT_FREEZE_V0_3_14.md
++docs/DIAGNOSE_V0_3_14.md
++docs/QUICK_TEST_COMMANDS_V0_3_14.md
++docs/release/RELEASE_CHECKS_V0_3_14.md
++```
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/appliance/src/phim_proxy_worker.c /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/appliance/src/phim_proxy_worker.c
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/appliance/src/phim_proxy_worker.c	2026-05-29 21:06:55.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/appliance/src/phim_proxy_worker.c	2026-05-29 22:31:08.625497800 +0000
+@@ -29,6 +29,7 @@
+ #define PHIM_BACKLOG 256
+ #define PHIM_MAX_REQUESTS_PER_TUNNEL 1000u
+ #define PHIM_TUNNEL_IDLE_TIMEOUT_MS 30000u
++#define PHIM_STREAM_INSPECT_OVERLAP_BYTES 4096u
+ 
+ static void phim_generate_flow_id(char out[PHIM_MAX_FLOW_ID])
+ {
+@@ -107,7 +108,34 @@
+         return PHIM_ERR;
+     }
+     if (request->chunked) {
+-        PHIM_LOGW("chunked request body is not buffered in MVP; forwarding headers only for flow safety");
++        phim_h1_chunked_decoder_t decoder;
++        size_t body_len;
++        phim_h1_chunked_decoder_init(&decoder);
++        body_len = used > request->header_len ? used - request->header_len : 0u;
++        if (body_len > 0u &&
++            phim_h1_chunked_decoder_feed(&decoder, buf + request->header_len, body_len) != PHIM_OK) {
++            free(buf);
++            return PHIM_ERR;
++        }
++        while (!phim_h1_chunked_decoder_complete(&decoder)) {
++            ssize_t n;
++            if (body_len >= cfg->max_body_bytes) {
++                PHIM_LOGW("chunked request body too large: %zu >= %zu", body_len, cfg->max_body_bytes);
++                free(buf);
++                return PHIM_ERR;
++            }
++            n = phim_ssl_read_some(ssl, buf + used, cfg->max_body_bytes - body_len);
++            if (n <= 0) {
++                free(buf);
++                return PHIM_ERR;
++            }
++            if (phim_h1_chunked_decoder_feed(&decoder, buf + used, (size_t)n) != PHIM_OK) {
++                free(buf);
++                return PHIM_ERR;
++            }
++            used += (size_t)n;
++            body_len += (size_t)n;
++        }
+         *out = buf;
+         *out_len = used;
+         return PHIM_OK;
+@@ -387,6 +415,154 @@
+                                sample, sample_len, headers_already_sent, out_blocked);
+ }
+ 
++static size_t phim_effective_sample_target(const phim_config_t *cfg)
++{
++    size_t target;
++    size_t max_sample;
++
++    if (cfg == NULL) {
++        return PHIM_MAX_SAMPLE;
++    }
++    max_sample = cfg->max_body_bytes;
++    target = cfg->sample_target_bytes;
++    if (max_sample < 4096u) {
++        max_sample = 4096u;
++    }
++    if (target < 4096u) {
++        target = 4096u;
++    }
++    if (max_sample > PHIM_STREAM_INSPECT_OVERLAP_BYTES + 4096u &&
++        target > max_sample - PHIM_STREAM_INSPECT_OVERLAP_BYTES) {
++        target = max_sample - PHIM_STREAM_INSPECT_OVERLAP_BYTES;
++    } else if (target > max_sample) {
++        target = max_sample;
++    }
++    return target;
++}
++
++static void phim_derive_response_segment_flow_id(const char *flow_id, unsigned int segment_index,
++                                                 char out[PHIM_MAX_FLOW_ID])
++{
++    char suffix[16];
++    int suffix_len;
++    size_t flow_len;
++    size_t copy_len;
++
++    suffix_len = snprintf(suffix, sizeof(suffix), "-%05u", 90000u + segment_index);
++    if (suffix_len <= 0 || (size_t)suffix_len >= sizeof(suffix)) {
++        (void)phim_copy_cstr(out, PHIM_MAX_FLOW_ID, flow_id);
++        return;
++    }
++    flow_len = strlen(flow_id);
++    copy_len = PHIM_MAX_FLOW_ID - (size_t)suffix_len - 1u;
++    if (flow_len < copy_len) {
++        copy_len = flow_len;
++    }
++    memcpy(out, flow_id, copy_len);
++    memcpy(out + copy_len, suffix, (size_t)suffix_len + 1u);
++}
++
++static void phim_stream_tail_update(unsigned char tail[PHIM_STREAM_INSPECT_OVERLAP_BYTES],
++                                    size_t *tail_len,
++                                    const unsigned char *chunk,
++                                    size_t chunk_len)
++{
++    size_t keep;
++
++    if (tail == NULL || tail_len == NULL || chunk == NULL || chunk_len == 0u) {
++        return;
++    }
++    if (chunk_len >= PHIM_STREAM_INSPECT_OVERLAP_BYTES) {
++        memcpy(tail, chunk + chunk_len - PHIM_STREAM_INSPECT_OVERLAP_BYTES,
++               PHIM_STREAM_INSPECT_OVERLAP_BYTES);
++        *tail_len = PHIM_STREAM_INSPECT_OVERLAP_BYTES;
++        return;
++    }
++    keep = *tail_len;
++    if (keep + chunk_len > PHIM_STREAM_INSPECT_OVERLAP_BYTES) {
++        size_t drop = keep + chunk_len - PHIM_STREAM_INSPECT_OVERLAP_BYTES;
++        memmove(tail, tail + drop, keep - drop);
++        keep -= drop;
++    }
++    memcpy(tail + keep, chunk, chunk_len);
++    *tail_len = keep + chunk_len;
++}
++
++static int phim_write_response_header_once(SSL *client_ssl,
++                                           const unsigned char *header_buf,
++                                           size_t header_len,
++                                           bool *header_sent)
++{
++    if (header_sent == NULL) {
++        return PHIM_ERR;
++    }
++    if (*header_sent) {
++        return PHIM_OK;
++    }
++    if (phim_write_filtered_response_header(client_ssl, header_buf, header_len) != PHIM_OK) {
++        return PHIM_ERR;
++    }
++    *header_sent = true;
++    return PHIM_OK;
++}
++
++static int phim_inspect_response_stream_chunk(SSL *client_ssl, const phim_config_t *cfg,
++                                              phim_verdict_engine_t *verdict_engine,
++                                              const char *flow_id, const char *client_ip,
++                                              uint16_t client_port,
++                                              const phim_connect_request_t *connect_req,
++                                              const phim_h1_request_t *request,
++                                              const unsigned char *chunk,
++                                              size_t chunk_len,
++                                              unsigned char tail[PHIM_STREAM_INSPECT_OVERLAP_BYTES],
++                                              size_t *tail_len,
++                                              unsigned int *segment_index,
++                                              bool headers_already_sent,
++                                              bool *out_blocked)
++{
++    char segment_flow_id[PHIM_MAX_FLOW_ID];
++    unsigned char *sample = NULL;
++    const unsigned char *sample_ptr;
++    size_t sample_len;
++    bool blocked = false;
++    int rc;
++
++    if (out_blocked != NULL) {
++        *out_blocked = false;
++    }
++    if (chunk == NULL || chunk_len == 0u || tail_len == NULL || segment_index == NULL) {
++        return PHIM_ERR;
++    }
++
++    phim_derive_response_segment_flow_id(flow_id, *segment_index, segment_flow_id);
++    sample_len = *tail_len + chunk_len;
++    if (*tail_len > 0u) {
++        sample = phim_xcalloc(1u, sample_len + 1u);
++        memcpy(sample, tail, *tail_len);
++        memcpy(sample + *tail_len, chunk, chunk_len);
++        sample_ptr = sample;
++    } else {
++        sample_ptr = chunk;
++    }
++
++    rc = phim_inspect_response_part(client_ssl, cfg, verdict_engine, segment_flow_id, client_ip, client_port,
++                                    connect_req, request, "body", sample_ptr, sample_len,
++                                    headers_already_sent, &blocked);
++    free(sample);
++    if (rc != PHIM_OK) {
++        return rc;
++    }
++    if (blocked) {
++        if (out_blocked != NULL) {
++            *out_blocked = true;
++        }
++        return PHIM_OK;
++    }
++    phim_stream_tail_update(tail, tail_len, chunk, chunk_len);
++    (*segment_index)++;
++    return PHIM_OK;
++}
++
+ static int phim_forward_response_fixed_length(SSL *client_ssl, SSL *upstream_ssl,
+                                               const phim_config_t *cfg,
+                                               phim_verdict_engine_t *verdict_engine,
+@@ -400,50 +576,63 @@
+                                               size_t initial_body_len,
+                                               phim_forward_result_t *result)
+ {
+-    size_t body_have = phim_min_size(initial_body_len, response->content_length);
+-    bool blocked = false;
+-
+-    if (response->content_length > cfg->max_body_bytes) {
+-        PHIM_LOGW("flow=%s response body too large for deterministic inspection: %zu > %zu",
+-                  flow_id, response->content_length, cfg->max_body_bytes);
+-        (void)phim_write_inspection_unavailable_ssl(client_ssl);
+-        result->blocked = true;
+-        return PHIM_OK;
+-    }
+-
+-    {
+-        unsigned char *body = phim_xcalloc(1u, response->content_length + 1u);
+-        if (body_have > 0u && initial_body != NULL) {
+-            memcpy(body, initial_body, body_have);
+-        }
+-        if (body_have < response->content_length) {
+-            if (phim_read_exact_ssl(upstream_ssl, body + body_have, response->content_length - body_have) != PHIM_OK) {
+-                free(body);
++    unsigned char tail[PHIM_STREAM_INSPECT_OVERLAP_BYTES];
++    size_t tail_len = 0u;
++    size_t target = phim_effective_sample_target(cfg);
++    unsigned char *chunk = phim_xcalloc(1u, target + 1u);
++    size_t remaining = response->content_length;
++    size_t initial_off = 0u;
++    size_t initial_limit = phim_min_size(initial_body_len, response->content_length);
++    unsigned int segment_index = 0u;
++    bool header_sent = false;
++
++    memset(tail, 0, sizeof(tail));
++    while (remaining > 0u) {
++        size_t chunk_len = 0u;
++        bool blocked = false;
++        while (chunk_len < target && remaining > 0u) {
++            size_t want = phim_min_size(target - chunk_len, remaining);
++            if (initial_body != NULL && initial_off < initial_limit) {
++                size_t available = initial_limit - initial_off;
++                size_t take = phim_min_size(want, available);
++                memcpy(chunk + chunk_len, initial_body + initial_off, take);
++                chunk_len += take;
++                initial_off += take;
++                remaining -= take;
++                continue;
++            }
++            if (phim_read_exact_ssl(upstream_ssl, chunk + chunk_len, want) != PHIM_OK) {
++                free(chunk);
+                 return PHIM_ERR;
+             }
++            chunk_len += want;
++            remaining -= want;
++        }
++        if (chunk_len == 0u) {
++            break;
+         }
+-        if (phim_inspect_response_part(client_ssl, cfg, verdict_engine, flow_id, client_ip, client_port,
+-                                       connect_req, request, "body", body, response->content_length,
+-                                       false, &blocked) != PHIM_OK) {
+-            free(body);
++        if (phim_inspect_response_stream_chunk(client_ssl, cfg, verdict_engine, flow_id, client_ip, client_port,
++                                               connect_req, request, chunk, chunk_len, tail, &tail_len,
++                                               &segment_index, header_sent, &blocked) != PHIM_OK) {
++            free(chunk);
+             return PHIM_ERR;
+         }
+         if (blocked) {
+             result->blocked = true;
+-            free(body);
++            free(chunk);
+             return PHIM_OK;
+         }
+-        if (phim_write_filtered_response_header(client_ssl, header_buf, response->header_len) != PHIM_OK) {
+-            free(body);
++        if (phim_write_response_header_once(client_ssl, header_buf, response->header_len, &header_sent) != PHIM_OK) {
++            free(chunk);
+             return PHIM_ERR;
+         }
+-        if (response->content_length > 0u && phim_ssl_write_all(client_ssl, body, response->content_length) != PHIM_OK) {
+-            free(body);
++        if (phim_ssl_write_all(client_ssl, chunk, chunk_len) != PHIM_OK) {
++            free(chunk);
+             return PHIM_ERR;
+         }
+-        free(body);
+     }
+ 
++    free(chunk);
+     result->upstream_reusable = !response->connection_close && !request->connection_close;
+     result->client_reusable = result->upstream_reusable;
+     return PHIM_OK;
+@@ -463,79 +652,73 @@
+                                          phim_forward_result_t *result)
+ {
+     phim_h1_chunked_decoder_t decoder;
+-    bool blocked = false;
+-    unsigned char *body;
+-    size_t body_len = 0u;
++    unsigned char tail[PHIM_STREAM_INSPECT_OVERLAP_BYTES];
++    size_t tail_len = 0u;
++    size_t target = phim_effective_sample_target(cfg);
++    unsigned char *chunk = phim_xcalloc(1u, target + 1u);
++    size_t chunk_len = 0u;
++    size_t initial_off = 0u;
++    unsigned int segment_index = 0u;
++    bool header_sent = false;
+ 
+     (void)response;
++    memset(tail, 0, sizeof(tail));
+     phim_h1_chunked_decoder_init(&decoder);
+-    body = phim_xcalloc(1u, cfg->max_body_bytes + 1u);
+-
+-    /* Deterministic enforcement: for chunked responses the proxy buffers the
+-     * complete encoded body up to tls.max_body_bytes, submits that complete
+-     * body to Suricata, and only then forwards headers/body.  No body chunk is
+-     * written to the client while the Suricata verdict is pending.
+-     */
+-    if (initial_body_len > cfg->max_body_bytes) {
+-        PHIM_LOGW("flow=%s chunked response initial body too large for deterministic inspection: %zu > %zu",
+-                  flow_id, initial_body_len, cfg->max_body_bytes);
+-        free(body);
+-        (void)phim_write_inspection_unavailable_ssl(client_ssl);
+-        result->blocked = true;
+-        return PHIM_OK;
+-    }
+-    if (initial_body_len > 0u && initial_body != NULL) {
+-        memcpy(body, initial_body, initial_body_len);
+-        body_len = initial_body_len;
+-        if (phim_h1_chunked_decoder_feed(&decoder, initial_body, initial_body_len) != PHIM_OK) {
+-            free(body);
+-            return PHIM_ERR;
+-        }
+-    }
+ 
+-    while (!phim_h1_chunked_decoder_complete(&decoder)) {
+-        ssize_t n;
+-        size_t room = cfg->max_body_bytes - body_len;
+-        if (room == 0u) {
+-            PHIM_LOGW("flow=%s chunked response body exceeded deterministic inspection limit=%zu",
+-                      flow_id, cfg->max_body_bytes);
+-            free(body);
+-            (void)phim_write_inspection_unavailable_ssl(client_ssl);
+-            result->blocked = true;
+-            return PHIM_OK;
++    for (;;) {
++        bool blocked = false;
++        while (chunk_len < target && !phim_h1_chunked_decoder_complete(&decoder)) {
++            size_t room = target - chunk_len;
++            if (initial_body != NULL && initial_off < initial_body_len) {
++                size_t take = phim_min_size(room, initial_body_len - initial_off);
++                memcpy(chunk + chunk_len, initial_body + initial_off, take);
++                if (phim_h1_chunked_decoder_feed(&decoder, chunk + chunk_len, take) != PHIM_OK) {
++                    free(chunk);
++                    return PHIM_ERR;
++                }
++                chunk_len += take;
++                initial_off += take;
++            } else {
++                ssize_t n = phim_ssl_read_some(upstream_ssl, chunk + chunk_len, room);
++                if (n <= 0) {
++                    free(chunk);
++                    return PHIM_ERR;
++                }
++                if (phim_h1_chunked_decoder_feed(&decoder, chunk + chunk_len, (size_t)n) != PHIM_OK) {
++                    free(chunk);
++                    return PHIM_ERR;
++                }
++                chunk_len += (size_t)n;
++            }
+         }
+-        n = phim_ssl_read_some(upstream_ssl, body + body_len, phim_min_size(room, PHIM_IO_BUF));
+-        if (n <= 0) {
+-            free(body);
+-            return PHIM_ERR;
++        if (chunk_len > 0u) {
++            if (phim_inspect_response_stream_chunk(client_ssl, cfg, verdict_engine, flow_id, client_ip, client_port,
++                                                   connect_req, request, chunk, chunk_len, tail, &tail_len,
++                                                   &segment_index, header_sent, &blocked) != PHIM_OK) {
++                free(chunk);
++                return PHIM_ERR;
++            }
++            if (blocked) {
++                result->blocked = true;
++                free(chunk);
++                return PHIM_OK;
++            }
++            if (phim_write_response_header_once(client_ssl, header_buf, response->header_len, &header_sent) != PHIM_OK) {
++                free(chunk);
++                return PHIM_ERR;
++            }
++            if (phim_ssl_write_all(client_ssl, chunk, chunk_len) != PHIM_OK) {
++                free(chunk);
++                return PHIM_ERR;
++            }
++            chunk_len = 0u;
+         }
+-        if (phim_h1_chunked_decoder_feed(&decoder, body + body_len, (size_t)n) != PHIM_OK) {
+-            free(body);
+-            return PHIM_ERR;
++        if (phim_h1_chunked_decoder_complete(&decoder)) {
++            break;
+         }
+-        body_len += (size_t)n;
+     }
+ 
+-    if (phim_inspect_response_part(client_ssl, cfg, verdict_engine, flow_id, client_ip, client_port,
+-                                   connect_req, request, body_len > 0u ? "body" : "headers",
+-                                   body_len > 0u ? body : NULL, body_len, false, &blocked) != PHIM_OK) {
+-        free(body);
+-        return PHIM_ERR;
+-    }
+-    if (blocked) {
+-        result->blocked = true;
+-        free(body);
+-        return PHIM_OK;
+-    }
+-    if (phim_write_filtered_response_header(client_ssl, header_buf, response->header_len) != PHIM_OK) {
+-        free(body);
+-        return PHIM_ERR;
+-    }
+-    if (body_len > 0u && phim_ssl_write_all(client_ssl, body, body_len) != PHIM_OK) {
+-        free(body);
+-        return PHIM_ERR;
+-    }
+-    free(body);
++    free(chunk);
+     result->upstream_reusable = !response->connection_close && !request->connection_close;
+     result->client_reusable = result->upstream_reusable;
+     return PHIM_OK;
+@@ -554,73 +737,87 @@
+                                              size_t initial_body_len,
+                                              phim_forward_result_t *result)
+ {
+-    bool blocked = false;
+-    unsigned char *body;
+-    size_t body_len = 0u;
++    unsigned char tail[PHIM_STREAM_INSPECT_OVERLAP_BYTES];
++    size_t tail_len = 0u;
++    size_t target = phim_effective_sample_target(cfg);
++    unsigned char *chunk = phim_xcalloc(1u, target + 1u);
++    size_t chunk_len = 0u;
++    size_t initial_off = 0u;
++    unsigned int segment_index = 0u;
++    bool header_sent = false;
+ 
+-    body = phim_xcalloc(1u, cfg->max_body_bytes + 1u);
+-
+-    /* Responses without Content-Length are only final when the upstream closes.
+-     * Buffer up to tls.max_body_bytes and ask Suricata for a verdict before the
+-     * client receives response headers or body.  Oversized/unfinished content is
+-     * not a final Suricata allow and is therefore not forwarded.
+-     */
+-    if (initial_body_len > cfg->max_body_bytes) {
+-        PHIM_LOGW("flow=%s until-close response initial body too large for deterministic inspection: %zu > %zu",
+-                  flow_id, initial_body_len, cfg->max_body_bytes);
+-        free(body);
+-        (void)phim_write_inspection_unavailable_ssl(client_ssl);
+-        result->blocked = true;
+-        return PHIM_OK;
+-    }
+-    if (initial_body_len > 0u && initial_body != NULL) {
+-        memcpy(body, initial_body, initial_body_len);
+-        body_len = initial_body_len;
+-    }
++    (void)response;
++    memset(tail, 0, sizeof(tail));
+ 
+     for (;;) {
+         ssize_t n;
+-        size_t room;
+-        if (body_len >= cfg->max_body_bytes) {
+-            PHIM_LOGW("flow=%s until-close response body exceeded deterministic inspection limit=%zu",
+-                      flow_id, cfg->max_body_bytes);
+-            free(body);
+-            (void)phim_write_inspection_unavailable_ssl(client_ssl);
+-            result->blocked = true;
+-            return PHIM_OK;
++        bool blocked = false;
++        while (chunk_len < target && initial_body != NULL && initial_off < initial_body_len) {
++            size_t take = phim_min_size(target - chunk_len, initial_body_len - initial_off);
++            memcpy(chunk + chunk_len, initial_body + initial_off, take);
++            chunk_len += take;
++            initial_off += take;
++        }
++        if (chunk_len < target) {
++            n = phim_ssl_read_some(upstream_ssl, chunk + chunk_len, target - chunk_len);
++            if (n > 0) {
++                chunk_len += (size_t)n;
++            } else if (n < 0) {
++                free(chunk);
++                return PHIM_ERR;
++            }
++        } else {
++            n = 1;
++        }
++
++        if (chunk_len > 0u && (chunk_len >= target || n == 0)) {
++            if (phim_inspect_response_stream_chunk(client_ssl, cfg, verdict_engine, flow_id, client_ip, client_port,
++                                                   connect_req, request, chunk, chunk_len, tail, &tail_len,
++                                                   &segment_index, header_sent, &blocked) != PHIM_OK) {
++                free(chunk);
++                return PHIM_ERR;
++            }
++            if (blocked) {
++                result->blocked = true;
++                free(chunk);
++                return PHIM_OK;
++            }
++            if (phim_write_response_header_once(client_ssl, header_buf, response->header_len, &header_sent) != PHIM_OK) {
++                free(chunk);
++                return PHIM_ERR;
++            }
++            if (phim_ssl_write_all(client_ssl, chunk, chunk_len) != PHIM_OK) {
++                free(chunk);
++                return PHIM_ERR;
++            }
++            chunk_len = 0u;
+         }
+-        room = cfg->max_body_bytes - body_len;
+-        n = phim_ssl_read_some(upstream_ssl, body + body_len, phim_min_size(room, PHIM_IO_BUF));
+         if (n == 0) {
+             break;
+         }
+-        if (n < 0) {
+-            free(body);
++    }
++
++    if (!header_sent) {
++        bool blocked = false;
++        char segment_flow_id[PHIM_MAX_FLOW_ID];
++        phim_derive_response_segment_flow_id(flow_id, segment_index, segment_flow_id);
++        if (phim_inspect_response_part(client_ssl, cfg, verdict_engine, segment_flow_id, client_ip, client_port,
++                                       connect_req, request, "headers", NULL, 0u, false, &blocked) != PHIM_OK) {
++            free(chunk);
++            return PHIM_ERR;
++        }
++        if (blocked) {
++            result->blocked = true;
++            free(chunk);
++            return PHIM_OK;
++        }
++        if (phim_write_response_header_once(client_ssl, header_buf, response->header_len, &header_sent) != PHIM_OK) {
++            free(chunk);
+             return PHIM_ERR;
+         }
+-        body_len += (size_t)n;
+     }
+ 
+-    if (phim_inspect_response_part(client_ssl, cfg, verdict_engine, flow_id, client_ip, client_port,
+-                                   connect_req, request, body_len > 0u ? "body" : "headers",
+-                                   body_len > 0u ? body : NULL, body_len, false, &blocked) != PHIM_OK) {
+-        free(body);
+-        return PHIM_ERR;
+-    }
+-    if (blocked) {
+-        result->blocked = true;
+-        free(body);
+-        return PHIM_OK;
+-    }
+-    if (phim_write_filtered_response_header(client_ssl, header_buf, response->header_len) != PHIM_OK) {
+-        free(body);
+-        return PHIM_ERR;
+-    }
+-    if (body_len > 0u && phim_ssl_write_all(client_ssl, body, body_len) != PHIM_OK) {
+-        free(body);
+-        return PHIM_ERR;
+-    }
+-    free(body);
++    free(chunk);
+     result->upstream_reusable = false;
+     result->client_reusable = false;
+     return PHIM_OK;
+@@ -659,7 +856,9 @@
+ 
+     if (phim_response_has_no_body(request, &response)) {
+         bool blocked = false;
+-        if (phim_inspect_response_part(client_ssl, cfg, verdict_engine, flow_id, client_ip, client_port,
++        char segment_flow_id[PHIM_MAX_FLOW_ID];
++        phim_derive_response_segment_flow_id(flow_id, 0u, segment_flow_id);
++        if (phim_inspect_response_part(client_ssl, cfg, verdict_engine, segment_flow_id, client_ip, client_port,
+                                        connect_req, request, "headers", NULL, 0u, false, &blocked) != PHIM_OK) {
+             free(buf);
+             return PHIM_ERR;
+@@ -715,7 +914,7 @@
+     if (phim_proxy_out_connect_tls(cfg, connect_req->host, connect_req->port, up_fd, up_ctx, up_ssl) != PHIM_OK) {
+         return PHIM_ERR;
+     }
+-    (void)phim_set_socket_recv_timeout(*up_fd, PHIM_TUNNEL_IDLE_TIMEOUT_MS);
++    (void)phim_set_socket_recv_timeout(*up_fd, cfg->idle_tunnel_timeout_ms);
+     return PHIM_OK;
+ }
+ 
+@@ -773,15 +972,22 @@
+     }
+     *out_continue = false;
+     phim_derive_request_flow_id(base_flow_id, request_index, request_flow_id);
++    if (request_index == 0u) {
++        (void)phim_set_socket_recv_timeout(SSL_get_fd(client_ssl), rt->cfg.first_request_timeout_ms);
++    } else {
++        (void)phim_set_socket_recv_timeout(SSL_get_fd(client_ssl), rt->cfg.idle_tunnel_timeout_ms);
++    }
+ 
+     if (phim_read_h1_request(client_ssl, &rt->cfg, &request_buf, &request_len, &h1req) != PHIM_OK) {
+         if (request_index == 0u) {
+-            PHIM_LOGW("flow=%s failed to read first H1 request", base_flow_id);
++            PHIM_LOGD("flow=%s no H1 request after TLS bump within %u ms; treating as idle/preconnect tunnel",
++                      base_flow_id, (unsigned int)rt->cfg.first_request_timeout_ms);
+         } else {
+             PHIM_LOGD("flow=%s tunnel idle/closed after %u requests", base_flow_id, request_index);
+         }
+         return PHIM_OK;
+     }
++    (void)phim_set_socket_recv_timeout(SSL_get_fd(client_ssl), rt->cfg.idle_tunnel_timeout_ms);
+ 
+     phim_fill_meta(&meta, request_flow_id, "request", "headers", client_ip, client_port, connect_req,
+                    h1req.method, h1req.target,
+@@ -887,7 +1093,7 @@
+         phim_close_fd(&client_fd);
+         return NULL;
+     }
+-    (void)phim_set_socket_recv_timeout(client_fd, PHIM_TUNNEL_IDLE_TIMEOUT_MS);
++    (void)phim_set_socket_recv_timeout(client_fd, rt->cfg.first_request_timeout_ms);
+ 
+     while (keep_going && request_index < PHIM_MAX_REQUESTS_PER_TUNNEL) {
+         keep_going = false;
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/config/docker/phimantec-proxyd.conf /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/config/docker/phimantec-proxyd.conf
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/config/docker/phimantec-proxyd.conf	2026-05-29 21:08:29.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/config/docker/phimantec-proxyd.conf	2026-05-29 22:31:32.893028814 +0000
+@@ -13,6 +13,21 @@
+ upstream_verify = false
+ max_body_bytes = 1048576
+ 
++[http]
++mode = "h1_only"
++downstream_alpn = "http/1.1"
++upstream_alpn = "http/1.1"
++strip_alt_svc = true
++strip_upgrade_headers = true
++preconnect_grace_ms = 250
++first_request_timeout_ms = 1500
++idle_tunnel_timeout_ms = 30000
++
++[inspection]
++sample_target_bytes = 65536
++sample_max_bytes = 1048576
++stream_chunk_min_bytes = 32768
++
+ [lane]
+ enabled = true
+ addr = "127.0.0.1:18080"
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/config/phimantec-proxyd.conf /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/config/phimantec-proxyd.conf
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/config/phimantec-proxyd.conf	2026-05-29 21:08:29.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/config/phimantec-proxyd.conf	2026-05-29 22:31:32.893287007 +0000
+@@ -12,6 +12,21 @@
+ upstream_verify = false
+ max_body_bytes = 1048576
+ 
++[http]
++mode = "h1_only"
++downstream_alpn = "http/1.1"
++upstream_alpn = "http/1.1"
++strip_alt_svc = true
++strip_upgrade_headers = true
++preconnect_grace_ms = 250
++first_request_timeout_ms = 1500
++idle_tunnel_timeout_ms = 30000
++
++[inspection]
++sample_target_bytes = 65536
++sample_max_bytes = 1048576
++stream_chunk_min_bytes = 32768
++
+ [lane]
+ enabled = true
+ addr = "127.0.0.1:18080"
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docker-compose.yml /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docker-compose.yml
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docker-compose.yml	2026-05-29 21:12:23.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docker-compose.yml	2026-05-29 22:31:50.116018154 +0000
+@@ -1,4 +1,4 @@
+-name: ${PHIMANTEC_COMPOSE_PROJECT_NAME:-phimantec-c11-v0313}
++name: ${PHIMANTEC_COMPOSE_PROJECT_NAME:-phimantec-c11-v0317}
+ 
+ services:
+   suricata-node:
+@@ -14,7 +14,7 @@
+         PHIMANTEC_APT_TIMEOUT: ${PHIMANTEC_APT_TIMEOUT:-12}
+         PHIMANTEC_APT_FORCE_IPV4: ${PHIMANTEC_APT_FORCE_IPV4:-1}
+         PHIMANTEC_SURICATA_APT_PPA: ${PHIMANTEC_SURICATA_APT_PPA:-ppa:oisf/suricata-stable}
+-    image: phimantec/suricata-node:${PHIMANTEC_VERSION:-0.3.13-monitor-offline-vendor}
++    image: phimantec/suricata-node:${PHIMANTEC_VERSION:-0.3.17-monitor-offline-vendor}
+     restart: unless-stopped
+     network_mode: host
+     stop_grace_period: 20s
+@@ -34,7 +34,7 @@
+       PHIMANTEC_REQUIRE_SURICATA8: ${PHIMANTEC_REQUIRE_SURICATA8:-1}
+       PHIMANTEC_FLOWBUS_TOKEN: ${PHIMANTEC_FLOWBUS_TOKEN:-phimantec-docker-token-change-me}
+       PHIMANTEC_FLOWBUS_POOL_SIZE: ${PHIMANTEC_FLOWBUS_POOL_SIZE:-4}
+-      PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS: ${PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS:-1200}
++      PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS: ${PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS:-2500}
+       PHIMANTEC_PROXY_PORT: ${PHIMANTEC_PROXY_PORT:-3128}
+       PHIMANTEC_MONITOR_PORT: ${PHIMANTEC_MONITOR_PORT:-5050}
+       PHIMANTEC_LANE_PORT: ${PHIMANTEC_LANE_PORT:-127.0.0.1:18080}
+@@ -58,7 +58,7 @@
+       start_period: 20s
+     labels:
+       org.phimantec.stack: "c11-appliance"
+-      org.phimantec.release: "0.3.13-monitor-offline-vendor"
++      org.phimantec.release: "0.3.17-monitor-offline-vendor"
+       org.phimantec.runtime-network: "host"
+ 
+   proxy:
+@@ -73,7 +73,7 @@
+         PHIMANTEC_APT_RETRIES: ${PHIMANTEC_APT_RETRIES:-0}
+         PHIMANTEC_APT_TIMEOUT: ${PHIMANTEC_APT_TIMEOUT:-12}
+         PHIMANTEC_APT_FORCE_IPV4: ${PHIMANTEC_APT_FORCE_IPV4:-1}
+-    image: phimantec/proxy:${PHIMANTEC_VERSION:-0.3.13-monitor-offline-vendor}
++    image: phimantec/proxy:${PHIMANTEC_VERSION:-0.3.17-monitor-offline-vendor}
+     restart: unless-stopped
+     network_mode: host
+     stop_grace_period: 20s
+@@ -89,6 +89,18 @@
+       PHIMANTEC_PROXY_PORT: ${PHIMANTEC_PROXY_PORT:-3128}
+       PHIMANTEC_LANE_PORT: ${PHIMANTEC_LANE_PORT:-127.0.0.1:18080}
+       PHIMANTEC_FLOWBUS_PORT_LOCAL: ${PHIMANTEC_FLOWBUS_PORT:-127.0.0.1:18090}
++      PHIMANTEC_HTTP_MODE: ${PHIMANTEC_HTTP_MODE:-h1_only}
++      PHIMANTEC_DOWNSTREAM_ALPN: ${PHIMANTEC_DOWNSTREAM_ALPN:-http/1.1}
++      PHIMANTEC_UPSTREAM_ALPN: ${PHIMANTEC_UPSTREAM_ALPN:-http/1.1}
++      PHIMANTEC_STRIP_ALT_SVC: ${PHIMANTEC_STRIP_ALT_SVC:-1}
++      PHIMANTEC_STRIP_UPGRADE_HEADERS: ${PHIMANTEC_STRIP_UPGRADE_HEADERS:-1}
++      PHIMANTEC_PRECONNECT_GRACE_MS: ${PHIMANTEC_PRECONNECT_GRACE_MS:-250}
++      PHIMANTEC_FIRST_REQUEST_TIMEOUT_MS: ${PHIMANTEC_FIRST_REQUEST_TIMEOUT_MS:-1500}
++      PHIMANTEC_IDLE_TUNNEL_TIMEOUT_MS: ${PHIMANTEC_IDLE_TUNNEL_TIMEOUT_MS:-30000}
++      PHIMANTEC_SAMPLE_TARGET_BYTES: ${PHIMANTEC_SAMPLE_TARGET_BYTES:-65536}
++      PHIMANTEC_SAMPLE_MAX_BYTES: ${PHIMANTEC_SAMPLE_MAX_BYTES:-1048576}
++      PHIMANTEC_STREAM_CHUNK_MIN_BYTES: ${PHIMANTEC_STREAM_CHUNK_MIN_BYTES:-32768}
++      PHIMANTEC_INSPECTION_FAIL_POLICY: ${PHIMANTEC_INSPECTION_FAIL_POLICY:-closed}
+       PHIMANTEC_CA_CN: ${PHIMANTEC_CA_CN:-PHIMANTEC C11 Docker Lab Root CA}
+       PHIMANTEC_REGENERATE_CA: ${PHIMANTEC_REGENERATE_CA:-0}
+     volumes:
+@@ -106,7 +118,7 @@
+       start_period: 10s
+     labels:
+       org.phimantec.stack: "c11-appliance"
+-      org.phimantec.release: "0.3.13-monitor-offline-vendor"
++      org.phimantec.release: "0.3.17-monitor-offline-vendor"
+       org.phimantec.runtime-network: "host"
+ 
+ volumes:
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/DIAGNOSE_V0_3_14.md /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/DIAGNOSE_V0_3_14.md
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/DIAGNOSE_V0_3_14.md	1970-01-01 00:00:00.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/DIAGNOSE_V0_3_14.md	2026-05-29 22:34:42.124409250 +0000
+@@ -0,0 +1,31 @@
++# Diagnose v0.3.14
++
++## Kurzdiagnose
++
++v0.3.14 ist kein Bypass- oder Heuristik-Patch. Die Version optimiert die vorhandene Suricata-only Enforcement-Kette durch:
++
++```text
++- H1.1-Only Mode
++- Transport-Header-Normalisierung
++- Preconnect-/Idle-Tunnel-Korrektur
++- segmentierte Response-Inspection
++- chunked Request-Body-Inspection
++- fail_policy closed als Runtime-Default
++```
++
++## Ursache der Ladeprobleme in v0.3.13
++
++v0.3.13 war sicher, aber bei grossen modernen Webseiten zu strikt gepuffert. Grosse Responses mussten vollstaendig bis zum Sample-Limit in den Proxy-Puffer, bevor der Client ein erlaubtes Byte erhielt. Wurde das Limit erreicht oder kein finales Verdict rechtzeitig verfuegbar, erschien `Inspection unavailable`.
++
++## v0.3.14-Korrektur
++
++v0.3.14 prueft Responses in Segmenten. Jedes Segment wird ueber Lane an Suricata gesendet und erst nach finalem Allow an den Client geschrieben. Dadurch sinkt die Lade-Latenz ohne Security-Absenkung.
++
++## Akzeptanz
++
++```text
++Suricata bleibt fachlicher Entscheider.
++Proxy forwardet nur final erlaubte Segmente.
++Kein Timeout/Error/Pending wird Allow.
++Keine Domain-, Content-Type- oder Media-Bypaesse.
++```
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/H1_ONLY_PAGE_LOADING_V0_3_14.md /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/H1_ONLY_PAGE_LOADING_V0_3_14.md
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/H1_ONLY_PAGE_LOADING_V0_3_14.md	1970-01-01 00:00:00.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/H1_ONLY_PAGE_LOADING_V0_3_14.md	2026-05-29 22:34:42.110026014 +0000
+@@ -0,0 +1,181 @@
++# PHIMANTEC v0.3.14 Konzept — H1.1-Only Mode, schnellere Seitenladung und stabile Inspection
++
++## 1. Ziel
++
++v0.3.14 optimiert das Laden moderner Webseiten minimal-invasiv, ohne das Sicherheitsmodell abzusenken.
++
++```text
++Suricata ist der einzige fachliche Malware- und Pattern-Entscheider.
++Der Proxy fuehrt keine eigene Malware-Erkennung aus.
++Traffic wird nach TLS-Bump als Plain HTTP inspiziert.
++Kein finales Suricata-Allow -> kein Forwarding.
++```
++
++Die Optimierung reduziert Protokollkonflikte und Roundtrip-Overhead. Sie ersetzt keine Suricata-Entscheidung und fuehrt keinen Content-/Host-Bypass ein.
++
++## 2. Diagnose aus v0.3.13
++
++v0.3.13 hatte die korrekte Security-Barriere, war aber fuer moderne Webseiten zu konservativ gepuffert:
++
++```text
++- Response-Bodies wurden bis zum konfigurierten Limit vollstaendig gepuffert.
++- Bodies oberhalb des Limits endeten fail-closed mit Inspection unavailable.
++- Speculative Preconnects erzeugten unnoetige H1-Request-Warnungen.
++- Kleine Subrequests erzeugten viele Lane-/FlowBus-Roundtrips.
++```
++
++Das war sicherer als ein stilles Allow, aber fuer grosse Seiten, CDNs, Range-Requests und Medien-Streams zu traege.
++
++## 3. H1.1-Only Mode
++
++PHIMANTEC implementiert weiterhin keinen HTTP/2-/HTTP/3-Stack. Stattdessen wird HTTP/1.1 bewusst als Inspection-Protokoll festgelegt:
++
++```env
++PHIMANTEC_HTTP_MODE=h1_only
++PHIMANTEC_DOWNSTREAM_ALPN=http/1.1
++PHIMANTEC_UPSTREAM_ALPN=http/1.1
++```
++
++Damit gilt:
++
++```text
++Browser -> Proxy: HTTP/1.1
++Proxy -> Zielserver: HTTP/1.1
++Lane -> Suricata: Plain HTTP/1.1
++```
++
++## 4. Transport-Header-Normalisierung
++
++Der Proxy entfernt nur Transport-/Upgrade-Hinweise, damit Browser nicht auf H2/H3/QUIC ausweichen:
++
++```text
++Alt-Svc
++Alt-Used
++HTTP2-Settings
++Upgrade
++Connection: Upgrade
++Connection: HTTP2-Settings
++```
++
++Diese Normalisierung ist keine Malware-Erkennung und kein Security-Gate. Sie stabilisiert nur die HTTP/1.1-Inspection-Kette.
++
++## 5. Preconnect und Idle-Tunnel
++
++Browser duerfen speculative TLS-Verbindungen aufbauen, ohne sofort einen Request zu senden. v0.3.14 behandelt das als erwartbares Idle-Verhalten:
++
++```env
++PHIMANTEC_PRECONNECT_GRACE_MS=250
++PHIMANTEC_FIRST_REQUEST_TIMEOUT_MS=1500
++PHIMANTEC_IDLE_TUNNEL_TIMEOUT_MS=30000
++```
++
++Wenn nach TLS-Bump kein H1-Request kommt, wird die Verbindung sauber geschlossen. Es wird nichts ungeprueft forwarded.
++
++## 6. Segmentierte Response-Inspection
++
++Der Kernpatch ist segmentiertes Forwarding mit harter Verdict-Barriere:
++
++```text
++Response-Header lesen
++Chunk/Segment lesen
++Segment an Lane senden
++Suricata-/FlowBus-Verdict abwarten
++nur bei finalem Allow Segment an Client schreiben
++bei Block/Timeout/Error nicht weiter forwarden
++```
++
++Dadurch muessen grosse Responses nicht mehr komplett bis `PHIMANTEC_SAMPLE_MAX_BYTES` im Speicher liegen, bevor der Client das erste erlaubte Segment erhaelt.
++
++Konfiguration:
++
++```env
++PHIMANTEC_SAMPLE_TARGET_BYTES=65536
++PHIMANTEC_SAMPLE_MAX_BYTES=1048576
++PHIMANTEC_STREAM_CHUNK_MIN_BYTES=32768
++```
++
++`PHIMANTEC_SAMPLE_TARGET_BYTES` steuert die Segmentgroesse. `PHIMANTEC_SAMPLE_MAX_BYTES` bleibt die maximale Suricata-Sample-Groesse pro Lane-Request.
++
++## 7. Cross-Segment-Sicherheit
++
++Damit Pattern an Segmentgrenzen nicht trivial geschnitten werden, verwendet v0.3.14 ein kleines Overlap-Fenster:
++
++```text
++Segment N wird inspiziert.
++Die letzten Bytes aus Segment N werden als Overlap in die Inspection von Segment N+1 aufgenommen.
++Nur neue Bytes werden an den Client geschrieben.
++```
++
++Das ersetzt keine vollstaendige AV-Archiv-Engine, verbessert aber die deterministische Streaming-Inspection ohne doppeltes Client-Forwarding.
++
++## 8. Request-Body-Korrektur
++
++Chunked Request-Bodies werden nicht mehr nur als Header weitergeleitet. Der Proxy buffert chunked Request-Bodies bis zum konfigurierten Sample-Limit, inspiziert sie ueber Suricata und forwarded sie erst nach finalem Allow.
++
++## 9. Verdict-Timeout und Fail-Closed
++
++```env
++PHIMANTEC_PROXY_VERDICT_TIMEOUT_MS=2500
++PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS=2500
++PHIMANTEC_INSPECTION_FAIL_POLICY=closed
++```
++
++Zulaessige Zustaende:
++
++```text
++BLOCK       -> sofort blockieren
++ALLOW_FINAL -> forwarden
++PENDING     -> weiter warten
++ERROR       -> nicht forwarden
++TIMEOUT     -> nicht forwarden
++```
++
++Nicht zulaessig:
++
++```text
++PENDING -> ALLOW
++ERROR   -> ALLOW
++TIMEOUT -> ALLOW
++```
++
++## 10. Was bewusst nicht gemacht wird
++
++```text
++kein YouTube-Bypass
++kein googlevideo-Bypass
++kein CDN-Bypass
++kein Content-Type-Bypass
++kein Media-Bypass
++kein Range-Bypass
++kein FlowBus-Timeout als Allow
++kein lokaler Malware-Scanner im Proxy
++```
++
++## 11. Erwarteter Effekt
++
++```text
++weniger H2/H3-Protokollkonflikte
++weniger Warnungen durch speculative Preconnects
++schnellere erste erlaubte Bytes bei grossen Responses
++weniger Inspection unavailable bei grossen, aber sauberen Streams
++weiterhin kein Forwarding ohne finales Suricata-Allow
++```
++
++## 12. Akzeptanztests
++
++```bash
++scripts/phimantec_smoke.sh
++scripts/eicar_url_matrix_test.sh
++curl -k -x http://127.0.0.1:3128 -I https://www.youtube.com/ | grep -i alt-svc || true
++scripts/phimantec_compose.sh compose logs --tail=500 proxy suricata-node \
++  | grep -E "inspection|failed to read first H1|suricata-alert|unavailable|timeout"
++```
++
++Erwartung:
++
++```text
++EICAR-Matrix: PASS
++Alt-Svc: keine Ausgabe
++Preconnects: keine Fehlerflut
++Inspection: kein stilles Allow bei Timeout/Error
++```
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/OPEN_POINTS_DEPLOYMENT_FREEZE_V0_3_14.md /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/OPEN_POINTS_DEPLOYMENT_FREEZE_V0_3_14.md
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/OPEN_POINTS_DEPLOYMENT_FREEZE_V0_3_14.md	1970-01-01 00:00:00.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/OPEN_POINTS_DEPLOYMENT_FREEZE_V0_3_14.md	2026-05-29 22:34:42.117309362 +0000
+@@ -0,0 +1,140 @@
++# PHIMANTEC v0.3.14 — Offene Punkte, Deployment-Dokumentation und Freeze-Check
++
++## 1. Zweck
++
++Dieses Dokument aktualisiert den v0.3.13-Freeze-Check fuer v0.3.14. v0.3.14 schliesst die wichtigsten offenen Punkte aus v0.3.13 und fuegt einen H1.1-Only-Performancepfad hinzu.
++
++## 2. Erreichter Stand
++
++```text
++Suricata ist einziger fachlicher Malware-/Pattern-Entscheider.
++Der Proxy fuehrt keine eigene Malware-Erkennung aus.
++Kein finales Suricata-Allow -> kein Forwarding.
++FlowBus-/EVE-/Pending-/Timeout-Probleme fuehren nicht zu stillem Allow.
++fail_policy ist im Code, in Configs und Docker-Entrypoints closed.
++HTTP/1.1 wird als stabiler Inspection-Modus dokumentiert und konfiguriert.
++```
++
++## 3. Geschlossene Punkte aus v0.3.13
++
++### 3.1 fail_policy-Inkonsistenz
++
++v0.3.13 dokumentierte `fail_policy = closed`, waehrend einzelne Runtime-Entrypoints noch auf `open` patchen konnten. v0.3.14 setzt konsistent:
++
++```text
++config/phimantec-proxyd.conf              -> fail_policy = "closed"
++config/docker/phimantec-proxyd.conf       -> fail_policy = "closed"
++scripts/docker_proxy_entrypoint.sh        -> fail_policy "closed"
++scripts/docker_suricata_node_entrypoint.sh-> fail_policy "closed"
++```
++
++Akzeptanz:
++
++```bash
++grep -RIn "fail_policy.*open" .
++```
++
++Erwartung: keine Treffer.
++
++### 3.2 Timeout-Konfiguration sichtbar
++
++v0.3.14 dokumentiert und expose-t die relevanten Fenster:
++
++```env
++PHIMANTEC_PROXY_VERDICT_TIMEOUT_MS=2500
++PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS=2500
++PHIMANTEC_PRECONNECT_GRACE_MS=250
++PHIMANTEC_FIRST_REQUEST_TIMEOUT_MS=1500
++PHIMANTEC_IDLE_TUNNEL_TIMEOUT_MS=30000
++```
++
++### 3.3 H1.1-Only Mode
++
++```env
++PHIMANTEC_HTTP_MODE=h1_only
++PHIMANTEC_DOWNSTREAM_ALPN=http/1.1
++PHIMANTEC_UPSTREAM_ALPN=http/1.1
++PHIMANTEC_STRIP_ALT_SVC=1
++PHIMANTEC_STRIP_UPGRADE_HEADERS=1
++```
++
++## 4. Weiterhin ehrliche Grenzen
++
++Eine allgemeine 100-%-Malware-Erkennung kann nicht garantiert werden. Garantiert werden soll innerhalb des PHIMANTEC-Scope:
++
++```text
++Wenn Suricata einen Flow final blockt, darf der Proxy nicht weiter forwarden.
++Wenn kein finales Suricata-Allow vorliegt, darf der Proxy nicht forwarden.
++```
++
++Nicht garantiert:
++
++```text
++Suricata erkennt jede Malware.
++Suricata entpackt jedes Archivformat vollstaendig.
++Jede verschachtelte oder obfuskierte Payload wird erkannt.
++```
++
++ZIP/TAR koennen im Lab sichtbar sein, GZIP/CAB und verschachtelte Container muessen als separate Capability-Matrix behandelt werden.
++
++## 5. Release-Freeze-Checkliste
++
++```text
++[x] H1.1-Only Mode dokumentiert
++[x] Downstream/Upstream ALPN auf http/1.1 festgelegt
++[x] Alt-Svc/Upgrade-Header werden entfernt
++[x] Preconnect/Idle-Tunnel werden sauber geschlossen
++[x] Chunked Request-Bodies werden gepuffert und inspiziert
++[x] Response-Body wird segmentiert inspiziert
++[x] Kein Segment wird ohne finales Allow forwarded
++[x] fail_policy ist closed
++[x] Verdict-Timeouts sind konfigurierbar
++[x] Unit-/CTest-Gates vorhanden
++[ ] Docker-Zielhost-Runtime-Test ausfuehren
++[ ] Browser-Test mit privatem Fenster und leerem Cache ausfuehren
++[ ] EICAR-Matrix auf Zielhost ausfuehren
++[ ] YouTube/CDN-Ladeverhalten manuell pruefen
++```
++
++## 6. Zielhost-Testsequenz
++
++```bash
++cd "$HOME"
++
++docker ps -a --filter "name=phimantec" -q | xargs -r docker rm -f
++rm -rf phimantec-c11-appliance-v0.3.17-monitor-offline-vendor
++
++unzip -q -o phimantec-v0.3.14-release.zip
++cd phimantec-c11-appliance-v0.3.17-monitor-offline-vendor
++
++sha256sum -c MANIFEST.sha256
++rm -f .env
++cp .env.example .env
++sed -i 's/^PHIMANTEC_REGENERATE_CA=.*/PHIMANTEC_REGENERATE_CA=1/' .env
++
++PHIMANTEC_AUTO_STOP_LEGACY_HOST_SERVICES=1 scripts/phimantec_deploy.sh --no-cache
++scripts/phimantec_smoke.sh
++```
++
++Danach:
++
++```bash
++PROXY_URL=http://127.0.0.1:3128 scripts/eicar_url_matrix_test.sh
++
++curl -k -x http://127.0.0.1:3128 -I https://www.youtube.com/ \
++  | grep -iE 'alt-svc|upgrade|http2-settings' || true
++
++scripts/phimantec_compose.sh compose logs --tail=500 proxy suricata-node \
++  | grep -E "inspection|suricata-alert|pending|unavailable|timeout|failed to read first H1" || true
++```
++
++## 7. Erwartung
++
++```text
++EICAR: kein Klartext-Leak im Client-Body
++Malware-Test: Suricata-alert fuehrt zu Block
++Timeout/Error: 503 oder sauberer Close, kein Allow
++Alt-Svc: entfernt
++Preconnects: keine Warnungsflut
++Seitenladung: schnellere erlaubte erste Segmente bei grossen Seiten
++```
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/QUICK_TEST_COMMANDS_V0_3_13.md /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/QUICK_TEST_COMMANDS_V0_3_13.md
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/QUICK_TEST_COMMANDS_V0_3_13.md	2026-05-29 21:17:36.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/QUICK_TEST_COMMANDS_V0_3_13.md	2026-05-29 22:31:47.759321649 +0000
+@@ -1,4 +1,4 @@
+-# Quick Test Commands v0.3.13
++# Quick Test Commands v0.3.14
+ 
+ ## 1. Frisches Deployment
+ 
+@@ -6,10 +6,10 @@
+ cd "$HOME"
+ 
+ docker ps -a --filter "name=phimantec" -q | xargs -r docker rm -f
+-rm -rf phimantec-c11-appliance-v0.3.13-monitor-offline-vendor
++rm -rf phimantec-c11-appliance-v0.3.17-monitor-offline-vendor
+ 
+-unzip -q -o phimantec-v0.3.13-release.zip
+-cd phimantec-c11-appliance-v0.3.13-monitor-offline-vendor
++unzip -q -o phimantec-v0.3.14-release.zip
++cd phimantec-c11-appliance-v0.3.17-monitor-offline-vendor
+ 
+ sha256sum -c MANIFEST.sha256
+ rm -f .env
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/QUICK_TEST_COMMANDS_V0_3_14.md /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/QUICK_TEST_COMMANDS_V0_3_14.md
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/QUICK_TEST_COMMANDS_V0_3_14.md	1970-01-01 00:00:00.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/QUICK_TEST_COMMANDS_V0_3_14.md	2026-05-29 22:34:42.130694932 +0000
+@@ -0,0 +1,29 @@
++# Quick Test Commands v0.3.14
++
++```bash
++cd "$HOME"
++docker ps -a --filter "name=phimantec" -q | xargs -r docker rm -f
++rm -rf phimantec-c11-appliance-v0.3.17-monitor-offline-vendor
++unzip -q -o phimantec-v0.3.14-release.zip
++cd phimantec-c11-appliance-v0.3.17-monitor-offline-vendor
++sha256sum -c MANIFEST.sha256
++rm -f .env
++cp .env.example .env
++sed -i 's/^PHIMANTEC_REGENERATE_CA=.*/PHIMANTEC_REGENERATE_CA=1/' .env
++PHIMANTEC_AUTO_STOP_LEGACY_HOST_SERVICES=1 scripts/phimantec_deploy.sh --no-cache
++scripts/phimantec_smoke.sh
++```
++
++```bash
++PROXY_URL=http://127.0.0.1:3128 scripts/eicar_url_matrix_test.sh
++```
++
++```bash
++curl -k -x http://127.0.0.1:3128 -I https://www.youtube.com/ \
++  | grep -iE 'alt-svc|upgrade|http2-settings' || true
++```
++
++```bash
++scripts/phimantec_compose.sh compose logs --tail=500 proxy suricata-node \
++  | grep -E 'inspection|suricata-alert|pending|unavailable|timeout|failed to read first H1' || true
++```
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/RELEASE_NOTES.md /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/RELEASE_NOTES.md
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/RELEASE_NOTES.md	2026-05-29 21:16:35.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/RELEASE_NOTES.md	2026-05-29 22:35:03.119014958 +0000
+@@ -1,17 +1,16 @@
+-# v0.3.13-monitor-offline-vendor
++# v0.3.17-monitor-offline-vendor
+ 
+-- Minimal-invasiver deterministischer Enforcement-Patch auf Basis von v0.3.12.
+-- Suricata bleibt der einzige fachliche Malware- und Pattern-Entscheider. Der Proxy fuehrt weiterhin keine eigene EICAR-/Malware-Erkennung und keine lokale Content-Heuristik aus.
+-- `inspectord` finalisiert `suricata-no-alert` nicht mehr sofort. Er wartet auf die EVE-/Lane-Korrelation bis zum konfigurierten Timeout und liefert nur `suricata-no-alert-final`, wenn der Flow im EVE-Pfad gesehen wurde und kein Alert erschien.
+-- Neuer Verdict-Zustand `pending`: Noch nicht verfuegbare Suricata-Entscheidungen werden explizit transportiert und vom Proxy nicht als Allow behandelt.
+-- Neuer Verdict-Zustand `error`: FlowBus-/Suricata-Unavailability ist nicht mehr stilles Allow, sondern fail-closed `Inspection unavailable`.
+-- `phim_verdict_check()` pollt FlowBus bis zum Gesamt-Timeout. Final sind nur `allow` und `block`.
+-- Fixed-Length-, Chunked- und Until-Close-Responses werden bis zum konfigurierten Inspection-Limit gepuffert. Header und Body werden erst nach finalem Suricata-Allow an den Client geschrieben.
+-- Bodies oberhalb des Inspection-Limits werden nicht teil-forwarded, sondern fail-closed behandelt.
+-- FlowBus JSON serialisiert/parst jetzt `allow`, `block`, `pending` und `error` sauber.
+-- EVE-Cursor-Fix: unvollstaendige EOF-Zeilen werden nicht als abgeschlossen konsumiert. Dadurch koennen lange/gerade geschriebene EVE-Alert-Zeilen nicht mehr durch Cursor-Fortschritt uebersprungen werden.
+-- Suricata-Testregeln: EICAR-Content-Regel bleibt erhalten; zusaetzliche Suricata-Pattern-Regel auf `X-Phim-Path` blockt EICAR-Testpfade, ohne dass der Proxy selbst testweise Malware erkennt.
+-- Neue Regressionen/Checks: pending/error FlowBus, delayed/partial EVE alert, Alert darf nicht von spaeterem No-Alert ueberschrieben werden, fail-closed Verdict-Timeout, vollstaendig gepuffertes Response-Forwarding, EICAR-URL-Matrix-Test mit Cache-Busting und `Connection: close`.
++- Minimal-invasiver H1.1-/Performance-/Stabilitaetspatch auf Basis von v0.3.13.
++- Sicherheitsmodell unveraendert: Suricata bleibt einziger fachlicher Malware- und Pattern-Entscheider; der Proxy fuehrt keine lokale Malware-/EICAR-Heuristik und keinen Domain-/Media-/Content-Type-Bypass aus.
++- H1.1-Only Mode als Default: `PHIMANTEC_HTTP_MODE=h1_only`, Downstream/Upstream ALPN jeweils `http/1.1`.
++- Response-Header-Normalisierung entfernt `Alt-Svc`, `Alt-Used`, `HTTP2-Settings`, `Upgrade` und `Connection: Upgrade` / `Connection: HTTP2-Settings`.
++- Preconnect-/Idle-Tunnel-Korrektur: erste H1-Request-Line bekommt ein kurzes konfigurierbares Fenster; reine speculative Preconnects werden sauber geschlossen und nicht als harte Fehlerflut geloggt.
++- Segmentierte Response-Inspection: Fixed-Length-, Chunked- und Until-Close-Responses werden in erlaubnisgebundenen Segmenten inspiziert und erst nach finalem Suricata-Allow forwarded.
++- Cross-Segment-Overlap reduziert Blindstellen an Segmentgrenzen, ohne Bytes doppelt an Clients zu schreiben.
++- Chunked Request-Bodies werden jetzt gepuffert und ueber Suricata inspiziert; das bisherige MVP-Verhalten `chunked request header-only` ist geschlossen.
++- `fail_policy` ist in Code, statischer Config und Docker-Entrypoints konsistent `closed`.
++- Verdict-Fenster und Streaming-Parameter sind ueber `.env` sichtbar: `PHIMANTEC_PROXY_VERDICT_TIMEOUT_MS`, `PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS`, `PHIMANTEC_SAMPLE_TARGET_BYTES`, `PHIMANTEC_SAMPLE_MAX_BYTES`.
++- Neue/erweiterte Regressionen: Transport-Header-Strip, multi-suffix Flow-ID-Korrelation fuer segmentierte Response-IDs, CMake/CTest-Gates.
+ 
+ # v0.3.12-monitor-offline-vendor
+ 
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/TEST_RESULTS_GENERATED.md /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/TEST_RESULTS_GENERATED.md
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/TEST_RESULTS_GENERATED.md	2026-05-29 21:20:16.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/TEST_RESULTS_GENERATED.md	2026-05-29 22:31:47.759116159 +0000
+@@ -1,4 +1,4 @@
+-# PHIMANTEC v0.3.13 Test Results
++# PHIMANTEC v0.3.14 Test Results
+ 
+ Ausgefuehrt in der Build-Sandbox:
+ 
+@@ -32,7 +32,7 @@
+ cert_generation         PASS
+ ```
+ 
+-Abgedeckte v0.3.13-Sicherheitsregressionen:
++Abgedeckte v0.3.14-Sicherheitsregressionen:
+ 
+ ```text
+ - pending/error Verdicts sind keine Allows.
+@@ -43,4 +43,4 @@
+ - Oversize-Responses werden nicht teil-forwarded.
+ ```
+ 
+-Nicht ausgefuehrt in der Sandbox: Docker-Runtime-Deploy und externer EICAR-Download, weil kein Docker-Daemon und kein Zielhost-Runtime-Kontext verfuegbar sind. Der Zielhost-Test ist in `docs/QUICK_TEST_COMMANDS_V0_3_13.md` beschrieben.
++Nicht ausgefuehrt in der Sandbox: Docker-Runtime-Deploy und externer EICAR-Download, weil kein Docker-Daemon und kein Zielhost-Runtime-Kontext verfuegbar sind. Der Zielhost-Test ist in `docs/QUICK_TEST_COMMANDS_V0_3_14.md` beschrieben.
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/TROUBLESHOOTING_PROXY_INSTALL.md /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/TROUBLESHOOTING_PROXY_INSTALL.md
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/TROUBLESHOOTING_PROXY_INSTALL.md	2026-05-29 21:20:33.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/TROUBLESHOOTING_PROXY_INSTALL.md	2026-05-29 22:35:14.220020268 +0000
+@@ -21,7 +21,7 @@
+ Lösung (sauberer Wechsel v0.2 -> v0.3.x):
+ 
+ ```bash
+-cd "$HOME/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor"
++cd "$HOME/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor"
+ scripts/phimantec_stop_legacy_host_services.sh
+ scripts/phimantec_deploy.sh --no-cache
+ # oder in einem Schritt:
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/phimantec-architecture.svg /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/phimantec-architecture.svg
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/phimantec-architecture.svg	2026-05-29 21:17:55.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/phimantec-architecture.svg	2026-05-29 22:33:43.353595207 +0000
+@@ -119,7 +119,7 @@
+       <text x="1100" y="312" font-size="13" font-weight="700" text-anchor="middle" fill="#991b1b">⑤ Verdict-Engine</text>
+       <text x="1100" y="330" font-size="10" text-anchor="middle" fill="#334155">phim_verdict.c</text>
+       <text x="1100" y="350" font-size="10" font-weight="600" text-anchor="middle" fill="#dc2626">★ FlowBus-Pool 4× RR</text>
+-      <text x="1100" y="368" font-size="10" text-anchor="middle" fill="#475569">fail_policy: closed/open</text>
++      <text x="1100" y="368" font-size="10" text-anchor="middle" fill="#475569">fail_policy: closed</text>
+       <text x="1100" y="385" font-size="10" font-style="italic" text-anchor="middle" fill="#64748b">Safety-Fallback bei Timeout</text>
+     </g>
+ 
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/release/RELEASE_CHECKS_V0_3_13.md /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/release/RELEASE_CHECKS_V0_3_13.md
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/release/RELEASE_CHECKS_V0_3_13.md	2026-05-29 21:17:48.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/release/RELEASE_CHECKS_V0_3_13.md	2026-05-29 22:31:47.759485470 +0000
+@@ -1,4 +1,4 @@
+-# Release Checks v0.3.13
++# Release Checks v0.3.14
+ 
+ Ausgefuehrte Gates in der Build-Sandbox:
+ 
+@@ -13,7 +13,7 @@
+ CTest                                        9/9 PASS
+ ```
+ 
+-Neue v0.3.13-Gates:
++Neue v0.3.14-Gates:
+ 
+ ```text
+ - FlowBus JSON kann allow/block/pending/error lesen und schreiben.
+@@ -28,4 +28,4 @@
+ - EICAR-Matrix-Test verwendet Cache-Busting und Connection: close.
+ ```
+ 
+-Docker-Runtime wurde in der Build-Sandbox nicht ausgefuehrt, weil kein Docker-Daemon verfuegbar ist. Der Zielhost-Runtime-Test ist in `docs/QUICK_TEST_COMMANDS_V0_3_13.md` beschrieben.
++Docker-Runtime wurde in der Build-Sandbox nicht ausgefuehrt, weil kein Docker-Daemon verfuegbar ist. Der Zielhost-Runtime-Test ist in `docs/QUICK_TEST_COMMANDS_V0_3_14.md` beschrieben.
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/release/RELEASE_CHECKS_V0_3_14.md /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/release/RELEASE_CHECKS_V0_3_14.md
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/release/RELEASE_CHECKS_V0_3_14.md	1970-01-01 00:00:00.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/release/RELEASE_CHECKS_V0_3_14.md	2026-05-29 22:34:42.137599493 +0000
+@@ -0,0 +1,36 @@
++# Release Checks v0.3.14
++
++## Lokale Gates
++
++```text
++check_release_context.sh
++bash -n scripts/*.sh
++python py_compile fuer Python-Komponenten
++suricata-monitor unit smoke
++proxy streaming guard
++suricata yaml patch tests
++cmake build
++ctest
++vendor no-source smoke
++```
++
++## Runtime Gates auf Zielhost
++
++```text
++Docker Deploy
++phimantec_smoke.sh
++EICAR URL Matrix
++Alt-Svc/Upgrade Header Strip
++Browser-Privatfenster-Test
++Logpruefung auf no silent allow
++```
++
++## Nicht erlaubt
++
++```text
++HTTP 200 mit EICAR-STANDARD-ANTIVIRUS-TEST-FILE im Client-Body
++PENDING -> ALLOW
++TIMEOUT -> ALLOW
++ERROR -> ALLOW
++Domain-/Media-/Content-Type-Bypass
++```
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/release/VERIFY_RELEASE_V0_3_14.log /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/release/VERIFY_RELEASE_V0_3_14.log
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/docs/release/VERIFY_RELEASE_V0_3_14.log	1970-01-01 00:00:00.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/docs/release/VERIFY_RELEASE_V0_3_14.log	2026-05-29 22:37:51.801761166 +0000
+@@ -0,0 +1,22 @@
++PHIMANTEC v0.3.14 verify_release summary
++
++Executed in sandbox:
++- scripts/check_release_context.sh: OK
++- scripts/verify_release.sh: OK
++- bash -n scripts/*.sh: OK
++- python py_compile: OK
++- suricata-monitor unit smoke: OK
++- tests/test_suricata_yaml_patch.py: OK
++- tests/test_proxy_streaming_guard.py: OK
++- scripts/verify_docker_static.sh: OK
++- CA generation smoke: OK
++- cmake build: OK
++- ctest: 9/9 passed
++- vendor no-source smoke: OK
++
++Not executed in sandbox:
++- Full Docker runtime deployment
++- external EICAR URL matrix against live target host
++- browser YouTube/manual page-loading test
++
++These are provided as target-host gates in docs/QUICK_TEST_COMMANDS_V0_3_14.md and docs/OPEN_POINTS_DEPLOYMENT_FREEZE_V0_3_14.md.
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/__pycache__/phimantec_suricata_yaml_patch.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/__pycache__/phimantec_suricata_yaml_patch.cpython-313.pyc differ
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/build_docker_runtime_bundle.sh /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/build_docker_runtime_bundle.sh
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/build_docker_runtime_bundle.sh	2026-05-29 21:12:23.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/build_docker_runtime_bundle.sh	2026-05-29 22:31:47.757639836 +0000
+@@ -2,7 +2,7 @@
+ set -Eeuo pipefail
+ 
+ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+-VERSION="${PHIMANTEC_VERSION:-0.3.13-monitor-offline-vendor}"
++VERSION="${PHIMANTEC_VERSION:-0.3.17-monitor-offline-vendor}"
+ OUT_DIR="${PHIMANTEC_BUNDLE_OUT_DIR:-${ROOT_DIR}/dist}"
+ IMAGE_TAR="${OUT_DIR}/phimantec-${VERSION}-images.tar"
+ BUNDLE="${OUT_DIR}/phimantec-${VERSION}-runtime-bundle.tar.gz"
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/check_release_context.sh /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/check_release_context.sh
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/check_release_context.sh	2026-05-29 21:12:23.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/check_release_context.sh	2026-05-29 22:31:47.756333551 +0000
+@@ -1,8 +1,8 @@
+ #!/usr/bin/env bash
+ set -Eeuo pipefail
+ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+-EXPECTED_VERSION="0.3.13-monitor-offline-vendor"
+-EXPECTED_RELEASE="phimantec-c11-appliance-v0.3.13-monitor-offline-vendor"
++EXPECTED_VERSION="0.3.17-monitor-offline-vendor"
++EXPECTED_RELEASE="phimantec-c11-appliance-v0.3.17-monitor-offline-vendor"
+ fail(){ printf '[release-context] ERROR: %s\n' "$*" >&2; exit 64; }
+ base="$(basename "$ROOT_DIR")"
+ [[ "$base" == "$EXPECTED_RELEASE" || "${PHIMANTEC_ALLOW_RENAMED_ROOT:-0}" == "1" ]] || fail "falsches Verzeichnis: ${ROOT_DIR}; erwartet ${EXPECTED_RELEASE}. Setze PHIMANTEC_ALLOW_RENAMED_ROOT=1 nur bewusst."
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/docker_proxy_entrypoint.sh /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/docker_proxy_entrypoint.sh
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/docker_proxy_entrypoint.sh	2026-05-29 18:25:44.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/docker_proxy_entrypoint.sh	2026-05-29 22:31:32.893487177 +0000
+@@ -71,8 +71,20 @@
+   patch_toml_string "$CONFIG_PATH" flowbus addr "$flowbus_value"
+   patch_toml_string "$CONFIG_PATH" lane pool_size "${PHIMANTEC_LANE_POOL_SIZE:-4}"
+   patch_toml_string "$CONFIG_PATH" flowbus pool_size "${PHIMANTEC_FLOWBUS_POOL_SIZE:-4}"
+-  patch_toml_string "$CONFIG_PATH" verdict timeout_ms "${PHIMANTEC_PROXY_VERDICT_TIMEOUT_MS:-1200}"
+-  patch_toml_string "$CONFIG_PATH" verdict fail_policy "open"
++  patch_toml_string "$CONFIG_PATH" http mode "${PHIMANTEC_HTTP_MODE:-h1_only}"
++  patch_toml_string "$CONFIG_PATH" http downstream_alpn "${PHIMANTEC_DOWNSTREAM_ALPN:-http/1.1}"
++  patch_toml_string "$CONFIG_PATH" http upstream_alpn "${PHIMANTEC_UPSTREAM_ALPN:-http/1.1}"
++  patch_toml_string "$CONFIG_PATH" http strip_alt_svc "${PHIMANTEC_STRIP_ALT_SVC:-1}"
++  patch_toml_string "$CONFIG_PATH" http strip_upgrade_headers "${PHIMANTEC_STRIP_UPGRADE_HEADERS:-1}"
++  patch_toml_string "$CONFIG_PATH" http preconnect_grace_ms "${PHIMANTEC_PRECONNECT_GRACE_MS:-250}"
++  patch_toml_string "$CONFIG_PATH" http first_request_timeout_ms "${PHIMANTEC_FIRST_REQUEST_TIMEOUT_MS:-1500}"
++  patch_toml_string "$CONFIG_PATH" http idle_tunnel_timeout_ms "${PHIMANTEC_IDLE_TUNNEL_TIMEOUT_MS:-30000}"
++  patch_toml_string "$CONFIG_PATH" inspection sample_target_bytes "${PHIMANTEC_SAMPLE_TARGET_BYTES:-65536}"
++  patch_toml_string "$CONFIG_PATH" inspection sample_max_bytes "${PHIMANTEC_SAMPLE_MAX_BYTES:-1048576}"
++  patch_toml_string "$CONFIG_PATH" inspection stream_chunk_min_bytes "${PHIMANTEC_STREAM_CHUNK_MIN_BYTES:-32768}"
++  patch_toml_string "$CONFIG_PATH" tls max_body_bytes "${PHIMANTEC_SAMPLE_MAX_BYTES:-1048576}"
++  patch_toml_string "$CONFIG_PATH" verdict timeout_ms "${PHIMANTEC_PROXY_VERDICT_TIMEOUT_MS:-2500}"
++  patch_toml_string "$CONFIG_PATH" verdict fail_policy "closed"
+ }
+ 
+ openssl_text() {
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/docker_suricata_node_entrypoint.sh /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/docker_suricata_node_entrypoint.sh
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/docker_suricata_node_entrypoint.sh	2026-05-29 19:48:42.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/docker_suricata_node_entrypoint.sh	2026-05-29 22:31:32.893855863 +0000
+@@ -151,8 +151,8 @@
+   patch_toml_string "$NODE_CONFIG" lane addr "$lane_value"
+   patch_toml_string "$NODE_CONFIG" flowbus addr "$flowbus_value"
+   patch_toml_string "$NODE_CONFIG" flowbus pool_size "${PHIMANTEC_FLOWBUS_POOL_SIZE:-4}"
+-  patch_toml_string "$NODE_CONFIG" verdict timeout_ms "${PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS:-500}"
+-  patch_toml_string "$NODE_CONFIG" verdict fail_policy "open"
++  patch_toml_string "$NODE_CONFIG" verdict timeout_ms "${PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS:-2500}"
++  patch_toml_string "$NODE_CONFIG" verdict fail_policy "closed"
+ 
+   SURIMON_CONFIG_PATH="$SURIMON_CONFIG" \
+   SURIMON_BIND_HOST="$monitor_host" \
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/export_docker_ca.sh /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/export_docker_ca.sh
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/export_docker_ca.sh	2026-05-29 21:12:23.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/export_docker_ca.sh	2026-05-29 22:31:47.757158167 +0000
+@@ -4,7 +4,7 @@
+ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ ENV_FILE="${PHIMANTEC_ENV_FILE:-${ROOT_DIR}/.env}"
+ COMPOSE_FILE="${PHIMANTEC_COMPOSE_FILE:-${ROOT_DIR}/docker-compose.yml}"
+-DEFAULT_PROJECT="phimantec-c11-v0313"
++DEFAULT_PROJECT="phimantec-c11-v0317"
+ CA_SOURCE="/etc/phimantec/ca/phimantec-bump-ca.crt"
+ 
+ log(){ printf '[export-ca] %s\n' "$*"; }
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/install_proxy_vm_ubuntu.sh /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/install_proxy_vm_ubuntu.sh
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/install_proxy_vm_ubuntu.sh	2026-05-29 21:20:43.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/install_proxy_vm_ubuntu.sh	2026-05-29 22:33:37.575933830 +0000
+@@ -24,8 +24,8 @@
+ find_zip() {
+   local candidate
+   for candidate in \
+-    "$ZIP_DIR/phimantec-v0.3.13-release.zip" \
+-    "$ZIP_DIR/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor.zip" \
++    "$ZIP_DIR/phimantec-v0.3.14-release.zip" \
++    "$ZIP_DIR/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor.zip" \
+     "$ZIP_DIR/phimantec-v0.3.9-release.zip" \
+     "$ZIP_DIR/phimantec-c11-appliance-v0.3.3-monitor-offline-vendor.zip" \
+     "$ZIP_DIR/phimantec-c11-appliance-v0.3.2-monitor-offline-vendor.zip" \
+@@ -80,8 +80,8 @@
+   ZIP_FILE="$(find_zip)" || {
+     printf '[PHIMANTEC-PROXY] Kein Projekt-ZIP in %s gefunden.\n' "$ZIP_DIR" >&2
+     printf '[PHIMANTEC-PROXY] Kopiere zuerst eines dieser ZIPs nach %s:\n' "$ZIP_DIR" >&2
+-    printf '  phimantec-v0.3.13-release.zip\n' >&2
+-    printf '  phimantec-c11-appliance-v0.3.13-monitor-offline-vendor.zip\n' >&2
++    printf '  phimantec-v0.3.14-release.zip\n' >&2
++    printf '  phimantec-c11-appliance-v0.3.17-monitor-offline-vendor.zip\n' >&2
+     printf '  phimantec-v0.3.9-release.zip\n' >&2
+     printf '  phimantec-c11-appliance-v0.3.3-monitor-offline-vendor.zip\n' >&2
+     printf '  phimantec-c11-appliance-v0.3.2-monitor-offline-vendor.zip\n' >&2
+@@ -213,14 +213,14 @@
+ addr = "$SURICATA_IP:18090"
+ pool_size = 4
+ token = "$TOKEN"
+-timeout_ms = 1500
++timeout_ms = 2500
+ 
+ [network]
+-connect_timeout_ms = 1500
++connect_timeout_ms = 2500
+ 
+ [verdict]
+-fail_policy = "open"
+-timeout_ms = 1500
++fail_policy = "closed"
++timeout_ms = 2500
+ EOF_CONF
+ 
+ sudo chown root:phimantec /etc/phimantec/phimantec-proxyd.conf
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/phimantec_compose.sh /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/phimantec_compose.sh
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/phimantec_compose.sh	2026-05-29 21:12:23.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/phimantec_compose.sh	2026-05-29 22:31:47.757489397 +0000
+@@ -4,8 +4,8 @@
+ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ ENV_FILE="${PHIMANTEC_ENV_FILE:-${ROOT_DIR}/.env}"
+ COMPOSE_FILE="${PHIMANTEC_COMPOSE_FILE:-${ROOT_DIR}/docker-compose.yml}"
+-DEFAULT_PROJECT="phimantec-c11-v0313"
+-EXPECTED_VERSION="0.3.13-monitor-offline-vendor"
++DEFAULT_PROJECT="phimantec-c11-v0317"
++EXPECTED_VERSION="0.3.17-monitor-offline-vendor"
+ 
+ log(){ printf '[phimantec-compose] %s\n' "$*" >&2; }
+ fail(){ printf '[phimantec-compose] ERROR: %s\n' "$*" >&2; exit 64; }
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/preflight_docker.sh /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/preflight_docker.sh
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/preflight_docker.sh	2026-05-29 21:12:23.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/preflight_docker.sh	2026-05-29 22:31:47.756988999 +0000
+@@ -3,7 +3,7 @@
+ 
+ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ ENV_FILE="${PHIMANTEC_ENV_FILE:-${ROOT_DIR}/.env}"
+-EXPECTED_VERSION="0.3.13-monitor-offline-vendor"
++EXPECTED_VERSION="0.3.17-monitor-offline-vendor"
+ CHECK_BUILD=1
+ CHECK_RUNTIME=1
+ 
+@@ -67,7 +67,7 @@
+   [[ -n "$value" ]] || value="$(read_env_value PHIMANTEC_COMPOSE_PROJECT_NAME "$ENV_FILE")"
+   [[ -n "$value" ]] || value="${PHIMANTEC_COMPOSE_PROJECT:-}"
+   [[ -n "$value" ]] || value="$(read_env_value PHIMANTEC_COMPOSE_PROJECT "$ENV_FILE")"
+-  [[ -n "$value" ]] || value="phimantec-c11-v0313"
++  [[ -n "$value" ]] || value="phimantec-c11-v0317"
+   printf '%s\n' "$value"
+ }
+ 
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/repair_suricata_rules_vm.sh /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/repair_suricata_rules_vm.sh
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/repair_suricata_rules_vm.sh	2026-05-29 21:14:54.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/repair_suricata_rules_vm.sh	2026-05-29 22:33:37.576288015 +0000
+@@ -49,11 +49,11 @@
+ addr = "0.0.0.0:18090"
+ pool_size = 4
+ token = "$TOKEN"
+-timeout_ms = 1500
++timeout_ms = 2500
+ 
+ [verdict]
+-fail_policy = "open"
+-timeout_ms = 1500
++fail_policy = "closed"
++timeout_ms = 2500
+ 
+ [suricata]
+ eve_path = "/var/log/suricata/eve.json"
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/smoke_docker.sh /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/smoke_docker.sh
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/smoke_docker.sh	2026-05-29 21:12:23.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/smoke_docker.sh	2026-05-29 22:31:47.757344645 +0000
+@@ -4,7 +4,7 @@
+ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ ENV_FILE="${PHIMANTEC_ENV_FILE:-${ROOT_DIR}/.env}"
+ COMPOSE_FILE="${PHIMANTEC_COMPOSE_FILE:-${ROOT_DIR}/docker-compose.yml}"
+-DEFAULT_PROJECT="phimantec-c11-v0313"
++DEFAULT_PROJECT="phimantec-c11-v0317"
+ EXTERNAL="${PHIMANTEC_SMOKE_EXTERNAL:-0}"
+ 
+ log(){ printf '[smoke-docker] %s\n' "$*"; }
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/verify_docker_static.sh /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/verify_docker_static.sh
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/verify_docker_static.sh	2026-05-29 21:18:59.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/verify_docker_static.sh	2026-05-29 22:37:18.223312327 +0000
+@@ -2,8 +2,8 @@
+ set -Eeuo pipefail
+ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ cd "$ROOT_DIR"
+-EXPECTED_VERSION="0.3.13-monitor-offline-vendor"
+-EXPECTED_PROJECT="phimantec-c11-v0313"
++EXPECTED_VERSION="0.3.17-monitor-offline-vendor"
++EXPECTED_PROJECT="phimantec-c11-v0317"
+ fail(){ printf '[verify-docker-static] ERROR: %s\n' "$*" >&2; exit 1; }
+ check_file(){ [[ -f "$1" ]] || fail "missing file: $1"; }
+ check_path(){ [[ -e "$1" ]] || fail "missing path: $1"; }
+@@ -116,13 +116,14 @@
+ check_proxy_streaming_block_context(){
+   grep -q 'headers_already_sent' appliance/src/phim_proxy_worker.c || fail "proxy block context flag missing"
+   grep -q 'phim_write_inspection_unavailable_ssl' appliance/src/phim_proxy_worker.c || fail "inspection unavailable 503 path missing"
+-  grep -q 'response body too large for deterministic inspection' appliance/src/phim_proxy_worker.c || fail "oversized response must fail closed before forwarding"
+-  grep -q 'chunked response initial body too large for deterministic inspection' appliance/src/phim_proxy_worker.c || fail "chunked response must be bounded before forwarding"
+-  grep -q 'until-close response initial body too large for deterministic inspection' appliance/src/phim_proxy_worker.c || fail "until-close response must be bounded before forwarding"
++  grep -q 'phim_inspect_response_stream_chunk' appliance/src/phim_proxy_worker.c || fail "segment verdict barrier missing"
++  grep -q 'PHIM_STREAM_INSPECT_OVERLAP_BYTES' appliance/src/phim_proxy_worker.c || fail "cross-segment overlap missing"
++  grep -q 'phim_write_response_header_once' appliance/src/phim_proxy_worker.c || fail "response header-once guard missing"
++  grep -q 'phim_h1_chunked_decoder_feed' appliance/src/phim_proxy_worker.c || fail "chunked request/response decoder guard missing"
+   ! grep -q 'body_chunk' appliance/src/phim_proxy_worker.c || fail "streaming body_chunk forwarding must not be used before final verdict"
+   grep -q 'test_proxy_streaming_guard' scripts/verify_release.sh || fail "proxy streaming regression test missing"
+ }
+-check_env_defaults(){ grep -q '^PHIMANTEC_PROXY_PORT=3128$' .env.example || fail "proxy default must be external 3128"; grep -q '^PHIMANTEC_MONITOR_PORT=5050$' .env.example || fail "monitor default must be external 5050"; grep -q '^PHIMANTEC_RUNTIME_NETWORK=host$' .env.example || fail "runtime network must default to host"; grep -q '^PHIMANTEC_APPLIANCE_MANAGE_INGRESS=1$' .env.example || fail "container ingress management must default to enabled"; grep -q '^PHIMANTEC_APPLIANCE_REQUIRE_INGRESS=1$' .env.example || fail "ingress must default to required"; grep -q '^PHIMANTEC_APPLIANCE_HOST_PRE_APPLY_INGRESS=0$' .env.example || fail "host pre-ingress must default to disabled"; grep -q '^PHIMANTEC_AUTO_EXPORT_CA=1$' .env.example || fail "CA auto export must default to enabled"; grep -q '^PHIMANTEC_ALLOW_LOCAL_BIND=0$' .env.example || fail "local bind override must default to disabled"; grep -q '^PHIMANTEC_REQUIRE_SURICATA8=1$' .env.example || fail "Suricata 8 requirement must default to enabled"; grep -q '^PHIMANTEC_REGENERATE_CA=0$' .env.example || fail "CA regeneration must default to disabled"; grep -q '^PHIMANTEC_LANE_POOL_SIZE=4$' .env.example || fail "lane pool default missing"; grep -q '^PHIMANTEC_FLOWBUS_POOL_SIZE=4$' .env.example || fail "flowbus pool default missing"; grep -q '^PHIMANTEC_PROXY_VERDICT_TIMEOUT_MS=2500$' .env.example || fail "proxy verdict timeout default missing"; grep -q '^PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS=1200$' .env.example || fail "suricata decision timeout default missing"; grep -q '^PHIMANTEC_SURICATA_MPM=hs$' .env.example || fail "mpm hs default missing"; grep -q '^PHIMANTEC_SURICATA_SPM=hs$' .env.example || fail "spm hs default missing"; grep -q '^PHIMANTEC_SURICATA_BODY_LIMIT=1048576$' .env.example || fail "suricata body limit default missing"; }
++check_env_defaults(){ grep -q '^PHIMANTEC_PROXY_PORT=3128$' .env.example || fail "proxy default must be external 3128"; grep -q '^PHIMANTEC_MONITOR_PORT=5050$' .env.example || fail "monitor default must be external 5050"; grep -q '^PHIMANTEC_RUNTIME_NETWORK=host$' .env.example || fail "runtime network must default to host"; grep -q '^PHIMANTEC_APPLIANCE_MANAGE_INGRESS=1$' .env.example || fail "container ingress management must default to enabled"; grep -q '^PHIMANTEC_APPLIANCE_REQUIRE_INGRESS=1$' .env.example || fail "ingress must default to required"; grep -q '^PHIMANTEC_APPLIANCE_HOST_PRE_APPLY_INGRESS=0$' .env.example || fail "host pre-ingress must default to disabled"; grep -q '^PHIMANTEC_AUTO_EXPORT_CA=1$' .env.example || fail "CA auto export must default to enabled"; grep -q '^PHIMANTEC_ALLOW_LOCAL_BIND=0$' .env.example || fail "local bind override must default to disabled"; grep -q '^PHIMANTEC_REQUIRE_SURICATA8=1$' .env.example || fail "Suricata 8 requirement must default to enabled"; grep -q '^PHIMANTEC_REGENERATE_CA=0$' .env.example || fail "CA regeneration must default to disabled"; grep -q '^PHIMANTEC_LANE_POOL_SIZE=4$' .env.example || fail "lane pool default missing"; grep -q '^PHIMANTEC_FLOWBUS_POOL_SIZE=4$' .env.example || fail "flowbus pool default missing"; grep -q '^PHIMANTEC_PROXY_VERDICT_TIMEOUT_MS=2500$' .env.example || fail "proxy verdict timeout default missing"; grep -q '^PHIMANTEC_SURICATA_DECISION_TIMEOUT_MS=2500$' .env.example || fail "suricata decision timeout default missing"; grep -q '^PHIMANTEC_SURICATA_MPM=hs$' .env.example || fail "mpm hs default missing"; grep -q '^PHIMANTEC_SURICATA_SPM=hs$' .env.example || fail "spm hs default missing"; grep -q '^PHIMANTEC_SURICATA_BODY_LIMIT=1048576$' .env.example || fail "suricata body limit default missing"; }
+ check_file docker/common/apt_install.sh
+ check_file .dockerignore
+ check_file .env.example
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/verify_release.sh /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/verify_release.sh
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/scripts/verify_release.sh	2026-05-29 21:12:23.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/scripts/verify_release.sh	2026-05-29 22:31:47.756514280 +0000
+@@ -2,8 +2,8 @@
+ set -Eeuo pipefail
+ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ BUILD_DIR="${PHIMANTEC_VERIFY_BUILD_DIR:-${ROOT_DIR}/build-verify}"
+-EXPECTED_VERSION="0.3.13-monitor-offline-vendor"
+-EXPECTED_RELEASE="phimantec-c11-appliance-v0.3.13-monitor-offline-vendor"
++EXPECTED_VERSION="0.3.17-monitor-offline-vendor"
++EXPECTED_RELEASE="phimantec-c11-appliance-v0.3.17-monitor-offline-vendor"
+ VERIFY_JOBS="${PHIMANTEC_VERIFY_JOBS:-1}"
+ log(){ printf '[verify] %s\n' "$*"; }
+ fail(){ printf '[verify] ERROR: %s\n' "$*" >&2; exit 1; }
+@@ -16,7 +16,7 @@
+ log "shell syntax"; while IFS= read -r -d '' file; do bash -n "$file"; done < <(find scripts -type f -name '*.sh' -print0)
+ log "python syntax"; python3 -m py_compile scripts/phimantec_suricata_yaml_patch.py suricata-monitor/backend/app.py suricata-monitor/backend/auth.py suricata-monitor/backend/config.py suricata-monitor/backend/db/connection.py suricata-monitor/backend/routes/*.py suricata-monitor/backend/services/*.py suricata-monitor/scripts/init_db.py suricata-monitor/tests/test_config_manager_paths.py suricata-monitor/tests/test_eve_reader_cursor.py tests/test_suricata_yaml_patch.py tests/test_proxy_streaming_guard.py
+ log "suricata-monitor unit smoke"; python3 suricata-monitor/tests/test_config_manager_paths.py; python3 suricata-monitor/tests/test_eve_reader_cursor.py
+-log "PHIMANTEC v0.3.13 regression smoke"; python3 tests/test_suricata_yaml_patch.py; python3 tests/test_proxy_streaming_guard.py
++log "PHIMANTEC v0.3.14 regression smoke"; python3 tests/test_suricata_yaml_patch.py; python3 tests/test_proxy_streaming_guard.py
+ if command -v node >/dev/null 2>&1; then log "javascript syntax"; find suricata-monitor/frontend/js -type f -name '*.js' -print0 | sort -z | xargs -0 -n 1 node --check; else log "node not found; javascript syntax check skipped"; fi
+ log "docker static sanity"; scripts/verify_docker_static.sh
+ log "CA generation smoke"; CA_SMOKE_DIR="$(mktemp -d)"; trap 'rm -rf "$CA_SMOKE_DIR"' EXIT; PHIMANTEC_CA_DIR="$CA_SMOKE_DIR/ca" scripts/gen_ca.sh >/dev/null 2>&1; openssl x509 -in "$CA_SMOKE_DIR/ca/phimantec-bump-ca.crt" -noout -subject >/dev/null; CA_SMOKE_TEXT="$(openssl x509 -in "$CA_SMOKE_DIR/ca/phimantec-bump-ca.crt" -noout -text)"; printf '%s\n' "$CA_SMOKE_TEXT" | grep -q 'CA:TRUE'; printf '%s\n' "$CA_SMOKE_TEXT" | grep -q 'Certificate Sign'; printf '%s\n' "$CA_SMOKE_TEXT" | grep -q 'CRL Sign'; openssl verify -CAfile "$CA_SMOKE_DIR/ca/phimantec-bump-ca.crt" "$CA_SMOKE_DIR/ca/phimantec-bump-ca.crt" >/dev/null; rm -rf "$CA_SMOKE_DIR"; trap - EXIT
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/shared/include/phimantec/phim_config.h /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/shared/include/phimantec/phim_config.h
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/shared/include/phimantec/phim_config.h	2026-05-29 11:41:10.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/shared/include/phimantec/phim_config.h	2026-05-29 22:29:41.919278699 +0000
+@@ -16,6 +16,15 @@
+     size_t cert_cache_entries;
+     bool upstream_verify;
+     size_t max_body_bytes;
++    char http_mode[32];
++    char downstream_alpn[32];
++    char upstream_alpn[32];
++    bool strip_alt_svc;
++    bool strip_upgrade_headers;
++    uint32_t preconnect_grace_ms;
++    uint32_t first_request_timeout_ms;
++    uint32_t idle_tunnel_timeout_ms;
++    size_t sample_target_bytes;
+ 
+     char lane_host[PHIM_MAX_HOST + 1u];
+     uint16_t lane_port;
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/shared/src/phim_config.c /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/shared/src/phim_config.c
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/shared/src/phim_config.c	2026-05-29 11:41:10.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/shared/src/phim_config.c	2026-05-29 22:29:41.919990744 +0000
+@@ -19,6 +19,15 @@
+     cfg->cert_cache_entries = 1024u;
+     cfg->upstream_verify = false;
+     cfg->max_body_bytes = 1024u * 1024u;
++    (void)phim_copy_cstr(cfg->http_mode, sizeof(cfg->http_mode), "h1_only");
++    (void)phim_copy_cstr(cfg->downstream_alpn, sizeof(cfg->downstream_alpn), "http/1.1");
++    (void)phim_copy_cstr(cfg->upstream_alpn, sizeof(cfg->upstream_alpn), "http/1.1");
++    cfg->strip_alt_svc = true;
++    cfg->strip_upgrade_headers = true;
++    cfg->preconnect_grace_ms = 250u;
++    cfg->first_request_timeout_ms = 1500u;
++    cfg->idle_tunnel_timeout_ms = 30000u;
++    cfg->sample_target_bytes = 65536u;
+     (void)phim_copy_cstr(cfg->lane_host, sizeof(cfg->lane_host), "127.0.0.1");
+     cfg->lane_port = PHIM_DEFAULT_LANE_PORT;
+     cfg->lane_enabled = true;
+@@ -28,9 +37,9 @@
+     (void)phim_copy_cstr(cfg->flowbus_token, sizeof(cfg->flowbus_token), "change-me-in-production");
+     cfg->flowbus_enabled = true;
+     cfg->flowbus_pool_size = 4u;
+-    cfg->verdict_timeout_ms = 500u;
++    cfg->verdict_timeout_ms = 2500u;
+     cfg->connect_timeout_ms = 1000u;
+-    cfg->fail_policy = PHIM_POLICY_FAIL_OPEN;
++    cfg->fail_policy = PHIM_POLICY_FAIL_CLOSED;
+     (void)phim_copy_cstr(cfg->eve_path, sizeof(cfg->eve_path), "/var/log/suricata/eve.json");
+     (void)phim_copy_cstr(cfg->lane_log_path, sizeof(cfg->lane_log_path), "/var/log/phimantec/lane.jsonl");
+ }
+@@ -132,8 +141,29 @@
+         cfg->cert_cache_entries = (size_t)strtoull(value, NULL, 10);
+     } else if (phim_strcasecmp_ascii(full_key, "tls.upstream_verify") == 0) {
+         cfg->upstream_verify = phim_parse_bool(value, cfg->upstream_verify);
+-    } else if (phim_strcasecmp_ascii(full_key, "tls.max_body_bytes") == 0) {
++    } else if (phim_strcasecmp_ascii(full_key, "tls.max_body_bytes") == 0 ||
++               phim_strcasecmp_ascii(full_key, "inspection.sample_max_bytes") == 0 ||
++               phim_strcasecmp_ascii(full_key, "inspection.max_sample_bytes") == 0) {
+         cfg->max_body_bytes = (size_t)strtoull(value, NULL, 10);
++    } else if (phim_strcasecmp_ascii(full_key, "http.mode") == 0) {
++        (void)phim_copy_cstr(cfg->http_mode, sizeof(cfg->http_mode), value);
++    } else if (phim_strcasecmp_ascii(full_key, "http.downstream_alpn") == 0) {
++        (void)phim_copy_cstr(cfg->downstream_alpn, sizeof(cfg->downstream_alpn), value);
++    } else if (phim_strcasecmp_ascii(full_key, "http.upstream_alpn") == 0) {
++        (void)phim_copy_cstr(cfg->upstream_alpn, sizeof(cfg->upstream_alpn), value);
++    } else if (phim_strcasecmp_ascii(full_key, "http.strip_alt_svc") == 0) {
++        cfg->strip_alt_svc = phim_parse_bool(value, cfg->strip_alt_svc);
++    } else if (phim_strcasecmp_ascii(full_key, "http.strip_upgrade_headers") == 0) {
++        cfg->strip_upgrade_headers = phim_parse_bool(value, cfg->strip_upgrade_headers);
++    } else if (phim_strcasecmp_ascii(full_key, "http.preconnect_grace_ms") == 0) {
++        cfg->preconnect_grace_ms = (uint32_t)strtoul(value, NULL, 10);
++    } else if (phim_strcasecmp_ascii(full_key, "http.first_request_timeout_ms") == 0) {
++        cfg->first_request_timeout_ms = (uint32_t)strtoul(value, NULL, 10);
++    } else if (phim_strcasecmp_ascii(full_key, "http.idle_tunnel_timeout_ms") == 0) {
++        cfg->idle_tunnel_timeout_ms = (uint32_t)strtoul(value, NULL, 10);
++    } else if (phim_strcasecmp_ascii(full_key, "inspection.sample_target_bytes") == 0 ||
++               phim_strcasecmp_ascii(full_key, "inspection.stream_chunk_min_bytes") == 0) {
++        cfg->sample_target_bytes = (size_t)strtoull(value, NULL, 10);
+     } else if (phim_strcasecmp_ascii(full_key, "lane.addr") == 0) {
+         if (phim_parse_hostport(value, host, sizeof(host), &port) != 0) {
+             return -1;
+@@ -237,5 +267,23 @@
+         }
+     }
+     fclose(f);
++    if (cfg->max_body_bytes < 4096u) {
++        cfg->max_body_bytes = 4096u;
++    }
++    if (cfg->sample_target_bytes < 4096u) {
++        cfg->sample_target_bytes = 4096u;
++    }
++    if (cfg->sample_target_bytes > cfg->max_body_bytes) {
++        cfg->sample_target_bytes = cfg->max_body_bytes;
++    }
++    if (cfg->verdict_timeout_ms < 250u) {
++        cfg->verdict_timeout_ms = 250u;
++    }
++    if (cfg->first_request_timeout_ms < cfg->preconnect_grace_ms) {
++        cfg->first_request_timeout_ms = cfg->preconnect_grace_ms;
++    }
++    if (cfg->idle_tunnel_timeout_ms < cfg->first_request_timeout_ms) {
++        cfg->idle_tunnel_timeout_ms = cfg->first_request_timeout_ms;
++    }
+     return 0;
+ }
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/shared/src/phim_eve.c /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/shared/src/phim_eve.c
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/shared/src/phim_eve.c	2026-05-29 21:04:14.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/shared/src/phim_eve.c	2026-05-29 22:31:17.403979208 +0000
+@@ -119,7 +119,8 @@
+ 
+     /* Production Flow-IDs are generated as UUID-like lowercase hex values:
+      *   8-4-4-4-12
+-     * and per-request subflows may append exactly -0001, -0002, ... .
++     * per-request and response-segment subflows may append numeric suffixes,
++     * e.g. -0001-90000.
+      *
+      * Do not copy arbitrary alpha-numeric characters until the next slash.
+      * Suricata payload_printable can collapse CR/LF between HTTP header lines,
+@@ -143,20 +144,21 @@
+         }
+     }
+ 
+-    if (*p == '-') {
++    while (*p == '-') {
+         const char *suffix = p + 1;
+         size_t suffix_len = 0u;
+         while (suffix[suffix_len] >= '0' && suffix[suffix_len] <= '9' && suffix_len < 8u) {
+             suffix_len++;
+         }
+-        if (suffix_len >= 4u) {
+-            if (out + suffix_len + 2u > sizeof(tmp)) {
+-                return PHIM_ERR;
+-            }
++        if (suffix_len < 4u) {
++            break;
++        }
++        if (out + suffix_len + 2u > sizeof(tmp)) {
++            return PHIM_ERR;
++        }
++        tmp[out++] = *p++;
++        for (i = 0u; i < suffix_len; i++) {
+             tmp[out++] = *p++;
+-            for (i = 0u; i < suffix_len; i++) {
+-                tmp[out++] = *p++;
+-            }
+         }
+     }
+ 
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/shared/src/phim_h1.c /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/shared/src/phim_h1.c
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/shared/src/phim_h1.c	2026-05-29 11:41:10.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/shared/src/phim_h1.c	2026-05-29 22:29:53.012142309 +0000
+@@ -188,6 +188,50 @@
+     return PHIM_OK;
+ }
+ 
++static bool phim_h1_header_name_eq(const unsigned char *line, size_t name_len, const char *name)
++{
++    return strlen(name) == name_len && phim_strncasecmp_ascii((const char *)line, name, name_len) == 0;
++}
++
++static bool phim_h1_should_strip_transport_hint(const unsigned char *line_start, size_t line_len)
++{
++    const unsigned char *colon;
++    size_t name_len;
++    const unsigned char *value_start;
++    size_t value_len;
++    char value[256];
++
++    colon = memchr(line_start, ':', line_len);
++    if (colon == NULL) {
++        return false;
++    }
++    name_len = (size_t)(colon - line_start);
++
++    if (phim_h1_header_name_eq(line_start, name_len, "Alt-Svc") ||
++        phim_h1_header_name_eq(line_start, name_len, "Alt-Used") ||
++        phim_h1_header_name_eq(line_start, name_len, "HTTP2-Settings") ||
++        phim_h1_header_name_eq(line_start, name_len, "Upgrade")) {
++        return true;
++    }
++
++    if (!phim_h1_header_name_eq(line_start, name_len, "Connection")) {
++        return false;
++    }
++
++    value_start = colon + 1;
++    while (value_start < line_start + line_len && isspace((unsigned char)*value_start) != 0) {
++        value_start++;
++    }
++    value_len = (size_t)((line_start + line_len) - value_start);
++    if (value_len >= sizeof(value)) {
++        value_len = sizeof(value) - 1u;
++    }
++    memcpy(value, value_start, value_len);
++    value[value_len] = '\0';
++    return phim_strcasestr_ascii(value, "upgrade") != NULL ||
++           phim_strcasestr_ascii(value, "http2-settings") != NULL;
++}
++
+ int phim_h1_strip_alt_svc(const unsigned char *header, size_t header_len,
+                           unsigned char *dst, size_t dst_cap, size_t *dst_len)
+ {
+@@ -209,13 +253,7 @@
+         line_len = pos - line_start;
+         pos += 2u;
+         if (line_len > 0u) {
+-            const unsigned char *colon = memchr(header + line_start, ':', line_len);
+-            if (colon != NULL) {
+-                size_t name_len = (size_t)(colon - (header + line_start));
+-                if (name_len == 7u && phim_strncasecmp_ascii((const char *)(header + line_start), "Alt-Svc", 7u) == 0) {
+-                    skip = true;
+-                }
+-            }
++            skip = phim_h1_should_strip_transport_hint(header + line_start, line_len);
+         }
+         if (!skip) {
+             if (out + line_len + 2u > dst_cap) {
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/__pycache__/app.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/__pycache__/app.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/__pycache__/auth.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/__pycache__/auth.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/__pycache__/config.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/__pycache__/config.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/db/__pycache__/connection.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/db/__pycache__/connection.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/__init__.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/__init__.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/auth_routes.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/auth_routes.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/dashboard_routes.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/dashboard_routes.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/events_routes.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/events_routes.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/rules_routes.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/rules_routes.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/settings_routes.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/settings_routes.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/system_routes.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/system_routes.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/users_routes.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/routes/__pycache__/users_routes.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/__init__.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/__init__.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/config_manager.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/config_manager.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/config_schema.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/config_schema.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/eve_reader.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/eve_reader.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/rules_manager.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/rules_manager.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/ruleset_manager.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/ruleset_manager.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/suricata_ctl.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/suricata_ctl.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/system_info.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/backend/services/__pycache__/system_info.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/scripts/__pycache__/init_db.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/scripts/__pycache__/init_db.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/tests/__pycache__/test_config_manager_paths.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/tests/__pycache__/test_config_manager_paths.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/suricata-monitor/tests/__pycache__/test_eve_reader_cursor.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/suricata-monitor/tests/__pycache__/test_eve_reader_cursor.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/tests/__pycache__/test_proxy_streaming_guard.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/tests/__pycache__/test_proxy_streaming_guard.cpython-313.pyc differ
+Binary files /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/tests/__pycache__/test_suricata_yaml_patch.cpython-313.pyc and /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/tests/__pycache__/test_suricata_yaml_patch.cpython-313.pyc differ
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/tests/test_eve_correlation.c /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/tests/test_eve_correlation.c
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/tests/test_eve_correlation.c	2026-05-29 21:14:18.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/tests/test_eve_correlation.c	2026-05-29 22:35:44.638687936 +0000
+@@ -17,6 +17,7 @@
+     const char *flow_eicar = "c215eabc-1555-75ba-a326-3ea5865c85bf";
+     const char *flow_path = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee";
+     const char *flow_suffix = "01234567-89ab-cdef-0123-456789abcdef-0001";
++    const char *flow_multi_suffix = "01234567-89ab-cdef-0123-456789abcdef-0001-90000";
+     const char *flow_http = "bbbbbbbb-1111-2222-3333-cccccccccccc";
+     const char *flow_partial = "dddddddd-1111-2222-3333-eeeeeeeeeeee";
+ 
+@@ -63,6 +64,16 @@
+ 
+     f = fopen(path, "a");
+     CHECK_TRUE(f != NULL);
++    (void)fprintf(f,
++        "{\"event_type\":\"alert\",\"http\":{\"url\":\"\\/phimantec\\/lane\\/response\\/%sTP\\/1.1\"},\"alert\":{\"signature_id\":900005,\"signature\":\"PHIMANTEC SEGMENT BLOCK\"}}\n",
++        flow_multi_suffix);
++    (void)fclose(f);
++    CHECK_TRUE(phim_eve_find_alert_for_flow(path, flow_multi_suffix, &sid, msg, sizeof(msg)) == PHIM_OK);
++    CHECK_TRUE(sid == 900005u);
++    CHECK_TRUE(strcmp(msg, "PHIMANTEC SEGMENT BLOCK") == 0);
++
++    f = fopen(path, "a");
++    CHECK_TRUE(f != NULL);
+     (void)fprintf(f,
+         "{\"event_type\":\"http\",\"http\":{\"url\":\"/phimantec/lane/response/%s\"}}\n",
+         flow_http);
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/tests/test_h1_parser.c /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/tests/test_h1_parser.c
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/tests/test_h1_parser.c	2026-05-29 11:41:10.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/tests/test_h1_parser.c	2026-05-29 22:33:32.023779742 +0000
+@@ -36,5 +36,10 @@
+     CHECK_TRUE(phim_h1_parse_response(resp, strlen((const char *)resp), &parsed_resp) == PHIM_OK);
+     CHECK_TRUE(phim_h1_strip_alt_svc(resp, parsed_resp.header_len, out, sizeof(out), &out_len) == PHIM_OK);
+     CHECK_TRUE(contains_bytes(out, out_len, "Alt-Svc") == 0);
++    CHECK_TRUE(contains_bytes(out, out_len, "Alt-Used") == 0);
++    CHECK_TRUE(contains_bytes(out, out_len, "HTTP2-Settings") == 0);
++    CHECK_TRUE(contains_bytes(out, out_len, "Upgrade:") == 0);
++    CHECK_TRUE(contains_bytes(out, out_len, "Connection:") == 0);
++    CHECK_TRUE(contains_bytes(out, out_len, "Content-Length: 5") == 1);
+     return 0;
+ }
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/tests/test_proxy_streaming_guard.py /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/tests/test_proxy_streaming_guard.py
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/tests/test_proxy_streaming_guard.py	2026-05-29 21:08:13.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/tests/test_proxy_streaming_guard.py	2026-05-29 22:36:52.797126424 +0000
+@@ -15,6 +15,16 @@
+ 
+ def main():
+     source = Path("appliance/src/phim_proxy_worker.c").read_text(encoding="utf-8")
++    read_req = function_block(
++        source,
++        "static int phim_read_h1_request",
++        "static int phim_send_block_ssl",
++    )
++    stream = function_block(
++        source,
++        "static int phim_inspect_response_stream_chunk",
++        "static int phim_forward_response_fixed_length",
++    )
+     fixed = function_block(
+         source,
+         "static int phim_forward_response_fixed_length",
+@@ -34,20 +44,28 @@
+     require("Inspection unavailable" in source, "inspection unavailable response missing")
+     require("verdict.action != PHIM_VERDICT_ALLOW" in source,
+             "proxy must treat every non-allow verdict as no-forward")
+-    require("response body too large for deterministic inspection" in fixed,
+-            "fixed-length oversized bodies must not be streamed")
+-    require("complete encoded body" in chunked,
+-            "chunked response must be fully buffered before verdict")
+-    require("Buffer up to tls.max_body_bytes" in until_close,
+-            "until-close response must be fully buffered before verdict")
+-    require(chunked.index("phim_inspect_response_part") < chunked.index("phim_write_filtered_response_header"),
+-            "chunked verdict must happen before header forwarding")
+-    require(until_close.index("phim_inspect_response_part") < until_close.index("phim_write_filtered_response_header"),
+-            "until-close verdict must happen before header forwarding")
++    require("phim_h1_chunked_decoder_feed" in read_req,
++            "chunked request bodies must be buffered and decoded before forwarding")
++    require("phim_inspect_response_stream_chunk" in fixed,
++            "fixed-length responses must use segment verdict barrier")
++    require("phim_inspect_response_stream_chunk" in chunked,
++            "chunked responses must use segment verdict barrier")
++    require("phim_inspect_response_stream_chunk" in until_close,
++            "until-close responses must use segment verdict barrier")
++    require("PHIM_STREAM_INSPECT_OVERLAP_BYTES" in source,
++            "streaming inspection must keep a cross-segment overlap window")
++    require(stream.index("phim_inspect_response_part") < stream.index("phim_stream_tail_update"),
++            "tail may only advance after a final allow")
++    require(fixed.index("phim_inspect_response_stream_chunk") < fixed.index("phim_write_response_header_once"),
++            "fixed-length segment verdict must happen before header forwarding")
++    require(chunked.index("phim_inspect_response_stream_chunk") < chunked.index("phim_write_response_header_once"),
++            "chunked segment verdict must happen before header forwarding")
++    require(until_close.index("phim_inspect_response_stream_chunk") < until_close.index("phim_write_response_header_once"),
++            "until-close segment verdict must happen before header forwarding")
+     require('"body_chunk"' not in chunked,
+-            "chunked body chunks must not be forwarded while verdict is pending")
++            "chunked body chunks must not bypass the verdict barrier")
+     require('"body_chunk"' not in until_close,
+-            "until-close body chunks must not be forwarded while verdict is pending")
++            "until-close body chunks must not bypass the verdict barrier")
+     return 0
+ 
+ 
+diff -ruN '--exclude=build-*' '--exclude=MANIFEST.sha256' '--exclude=SHA256SUMS' /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/tests/test_verdict_timeout.c /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/tests/test_verdict_timeout.c
+--- /mnt/data/orig_v0313_for_diff/phimantec-c11-appliance-v0.3.13-monitor-offline-vendor/tests/test_verdict_timeout.c	2026-05-29 21:07:33.000000000 +0000
++++ /mnt/data/work_v0314/phimantec-c11-appliance-v0.3.17-monitor-offline-vendor/tests/test_verdict_timeout.c	2026-05-29 22:35:14.220281739 +0000
+@@ -13,7 +13,7 @@
+     phim_verdict_t verdict;
+     phim_config_set_defaults(&cfg);
+ 
+-    /* PHIMANTEC v0.3.13: Suricata bleibt der einzige fachliche Entscheider.
++    /* PHIMANTEC v0.3.14: Suricata bleibt der einzige fachliche Entscheider.
+      * Der Proxy darf aber ohne finalen Suricata-Allow nicht forwarden. FlowBus-
+      * oder Suricata-Nichterreichbarkeit ist deshalb ein Inspection-Error und
+      * kein stilles Allow mehr.
