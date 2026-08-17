@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability report
+    url: https://github.com/Centaurus-X/Phimantic-IPS-Security-Appliance/blob/main/SECURITY.md
+    about: Please do NOT open a public issue for security vulnerabilities. Follow the responsible disclosure process in SECURITY.md.

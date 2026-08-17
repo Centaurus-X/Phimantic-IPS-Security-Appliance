@@ -1,0 +1,42 @@
+version: 2
+updates:
+  # GitHub Actions used by the governance CI workflow.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 2
+    groups:
+      github-actions-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Python backend of the Suricata monitor (only actually present ecosystem).
+  # Major upgrades are excluded; they require an explicit manual review.
+  - package-ecosystem: "pip"
+    directory: "/suricata-monitor/backend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 2
+    groups:
+      pip-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # Docker manifests (base image is parameterized via UBUNTU_BASE;
+  # Dependabot updates apply only where a resolvable FROM reference exists).
+  - package-ecosystem: "docker"
+    directory: "/docker/proxy"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 1
+  - package-ecosystem: "docker"
+    directory: "/docker/suricata-node"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 1

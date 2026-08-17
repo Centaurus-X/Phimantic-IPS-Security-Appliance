@@ -1,0 +1,62 @@
+name: Phimantic CI
+
+# GitHub governance CI. Runs ONLY the existing, unchanged release verifier
+# (scripts/verify_release.sh). It must not modify repository content,
+# release artifacts, checksums, or manifests.
+#
+# Release-guard note: scripts/verify_release.sh requires its root directory
+# to be named exactly "phimantec-c11-appliance-v0.3.18-monitor-offline-vendor".
+# The checkout therefore targets that fixed subdirectory; the verifier itself
+# is executed unchanged.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify-release:
+    name: verify-release
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+        working-directory: phimantec-c11-appliance-v0.3.18-monitor-offline-vendor
+    steps:
+      - name: Checkout into release-guard directory
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: phimantec-c11-appliance-v0.3.18-monitor-offline-vendor
+          persist-credentials: false
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            cmake \
+            libssl-dev \
+            pkg-config \
+            python3-yaml \
+            unzip
+
+      - name: Run existing release verifier (unchanged)
+        run: |
+          PHIMANTEC_VERIFY_JOBS="$(nproc)" bash scripts/verify_release.sh 2>&1 | tee ../verify-release.log
+
+      - name: Upload verification log
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: verify-release-log
+          path: verify-release.log
+          if-no-files-found: ignore

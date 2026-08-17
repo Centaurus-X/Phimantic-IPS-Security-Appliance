@@ -1,0 +1,37 @@
+name: Feature / Improvement Request
+description: Suggest an improvement or new capability
+title: "[Feature]: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe the improvement you have in mind.
+        Note: this project follows a strict fail-closed security model; proposals must not weaken it.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / motivation
+      description: What problem does this solve? What is the current limitation?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What should happen instead? Sketch the desired behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+  - type: textarea
+    id: impact
+    attributes:
+      label: Security and compatibility impact
+      description: Effect on the fail-closed model, TLS handling, verdict path, or existing deployments.
+    validations:
+      required: false
