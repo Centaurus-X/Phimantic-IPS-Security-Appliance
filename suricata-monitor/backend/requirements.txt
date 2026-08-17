@@ -8,5 +8,5 @@
 # Kein Suricatasc/suricata-python noetig.
 # Auth nutzt nur stdlib (hmac, hashlib, secrets, base64, json).
 # DB ist sqlite3 aus stdlib.
-Flask>=2.3,<4.0
+Flask>=3.1.3,<4.0
 PyYAML>=6.0
