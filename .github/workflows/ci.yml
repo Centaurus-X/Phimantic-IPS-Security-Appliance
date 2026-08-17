@@ -49,6 +49,13 @@ jobs:
             python3-yaml \
             unzip
 
+      # The repository intentionally stores scripts without the executable
+      # bit (git mode 100644). verify_release.sh invokes helper scripts
+      # directly, so the bit is set here in the ephemeral runner workspace
+      # only. Nothing is committed; repository content stays unchanged.
+      - name: Make existing shell scripts executable (runner workspace only)
+        run: chmod +x scripts/*.sh
+
       - name: Run existing release verifier (unchanged)
         run: |
           PHIMANTEC_VERIFY_JOBS="$(nproc)" bash scripts/verify_release.sh 2>&1 | tee ../verify-release.log
